@@ -10,8 +10,22 @@
 }
 
 .menu {
-	width:400px;
+	float: left;
+	width: 33%;
 }
 
+.button {
+	background-color: blue;
+	color: white;
+	border-radius: 50px;
+	height: 200px
+	display: inline-block;
+	text-align: center;
+	text-decoration: none;
+	width: 200px;
+}
 
+.row {
+	clear:both;
+}
 
