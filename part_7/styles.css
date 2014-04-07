@@ -17,12 +17,12 @@
 .button {
 	background-color: blue;
 	color: white;
-	border-radius: 50px;
-	height: 200px
+	border-radius: 20px;
+	height: 30px;
 	display: inline-block;
 	text-align: center;
 	text-decoration: none;
-	width: 200px;
+	width: 150px;
 }
 
 .row {
