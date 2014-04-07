@@ -114,6 +114,23 @@ th {
   font-weight:normal;
 }
 
+dt {
+    float: left;
+    clear: left;
+    width: 120px;
+    text-align: left;
+}
+
+
+dd {
+  margin-left:200px;
+  
+}
+
+
+
+
+
 
 /* ----------------------------------------------------------------- */
 /* The scary stuff below is just to get the right font loaded up.    */
