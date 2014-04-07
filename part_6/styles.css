@@ -47,11 +47,27 @@ font-family: "Computer Modern Serif";
 }
 
 .schedule {
+  margin-left: 100px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 18pt;
+  font-weight: 300;
+  border: 1px solid gray;
+}
+
+
+
+
+table, tbody, th, td {
+font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 15pt;
+  font-style: normal;
+  border: 1px solid lightgray;
+  border-collapse:collapse;
 
 }
 
 .odd_week {
-
+background-color: lavender;
 }
 
 .week {
@@ -86,7 +102,17 @@ font-family: "Computer Modern Serif";
   padding-left: 110px;
 }
 
+#rotate {
+  -webkit-transform: rotate(-90.0deg);
+  text-align: center;
+  text-transform: uppercase;
+}
 
+th {
+  background-color: black;
+  color: white;
+  font-weight:normal;
+}
 
 
 /* ----------------------------------------------------------------- */
