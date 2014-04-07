@@ -78,6 +78,14 @@ font-family: "Computer Modern Serif";
     text-transform: lowercase;
     text-transform: initial;
 }
+#tab {
+  margin-left: 2cm;
+}
+
+#tab2 {
+  padding-left: 110px;
+}
+
 
 
 
