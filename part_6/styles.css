@@ -20,34 +20,63 @@ font-family: "Computer Modern Serif";
 
 .quote {
   font-family: "Computer Modern Serif";
-    font-size: 14pt;
-    text-align: center;
+    font-size: 16pt;
     font-style: italic;
 }
 
-
-
-clearfix {
-
-}
-
-schedule {
+.name {
+   font-family: "Computer Modern Serif";
+    font-size: 16pt;
+    text-transform: uppercase;
 
 }
 
-odd_week {
+.title_2 {
+  font-family: "Computer Modern Serif";
+    font-size: 16pt;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    border-top-style: solid;
+    border-top-width: 2px;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+}
+
+.clearfix {
 
 }
 
-week {
+.schedule {
 
 }
 
+.odd_week {
 
+}
 
+.week {
 
+}
 
+html 
+{
+margin-top:1.9cm;
+margin-left:6.1cm;
+margin-right:6.1cm;
+}
 
+footer {
+  margin-left:20.2cm;
+}
+
+#small_italic {
+font-family: "Computer Modern Serif";
+    font-size: 11pt;
+    letter-spacing: 0.01em;
+    font-style: italic;
+    font-weight:normal;
+    text-transform: lowercase;
+}
 
 
 
