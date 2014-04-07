@@ -1,7 +1,54 @@
-body {
+
+.body {
   font-family: "Computer Modern Serif";
   font-size: 16pt;
 }
+
+.title_1 {
+  font-family: "Computer Modern Serif";
+  font-size: 32pt;
+  text-align: center;
+  letter-spacing: 0.25em;
+}
+.subtitle {
+font-family: "Computer Modern Serif";
+  font-size: 16pt;
+  text-align: center;
+  font-style: italic;
+  letter-spacing: 0.15em;
+}
+
+.quote {
+  font-family: "Computer Modern Serif";
+    font-size: 14pt;
+    text-align: center;
+    font-style: italic;
+}
+
+
+
+clearfix {
+
+}
+
+schedule {
+
+}
+
+odd_week {
+
+}
+
+week {
+
+}
+
+
+
+
+
+
+
 
 
 /* ----------------------------------------------------------------- */
