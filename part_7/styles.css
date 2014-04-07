@@ -29,3 +29,32 @@
 	clear:both;
 }
 
+.ss1 {
+	float:right;
+	width:66%;
+}
+
+.desc1 {
+	float:left;
+	width:33%;
+}
+
+.ss2 {
+	float:left;
+	width:66%;
+}
+
+.desc2 {
+	float:right;
+	width:33%;
+}
+
+.botmenu {
+	float:left;
+	width:25%;
+}
+
+
+
+
+
