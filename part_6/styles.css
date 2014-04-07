@@ -76,6 +76,7 @@ font-family: "Computer Modern Serif";
     font-style: italic;
     font-weight:normal;
     text-transform: lowercase;
+    text-transform: initial;
 }
 
 
