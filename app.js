@@ -1,6 +1,21 @@
 // MLB Stats API Base URL
 const MLB_API_BASE = 'https://statsapi.mlb.com/api/v1';
 
+// Team abbreviations
+const TEAM_ABBREV = {
+    'Arizona Diamondbacks': 'ARI', 'Atlanta Braves': 'ATL', 'Baltimore Orioles': 'BAL',
+    'Boston Red Sox': 'BOS', 'Chicago Cubs': 'CHC', 'Chicago White Sox': 'CHW',
+    'Cincinnati Reds': 'CIN', 'Cleveland Guardians': 'CLE', 'Colorado Rockies': 'COL',
+    'Detroit Tigers': 'DET', 'Houston Astros': 'HOU', 'Kansas City Royals': 'KC',
+    'Los Angeles Angels': 'LAA', 'Los Angeles Dodgers': 'LAD', 'Miami Marlins': 'MIA',
+    'Milwaukee Brewers': 'MIL', 'Minnesota Twins': 'MIN', 'New York Mets': 'NYM',
+    'New York Yankees': 'NYY', 'Oakland Athletics': 'OAK', 'Philadelphia Phillies': 'PHI',
+    'Pittsburgh Pirates': 'PIT', 'San Diego Padres': 'SD', 'San Francisco Giants': 'SF',
+    'Seattle Mariners': 'SEA', 'St. Louis Cardinals': 'STL', 'Tampa Bay Rays': 'TB',
+    'Texas Rangers': 'TEX', 'Toronto Blue Jays': 'TOR', 'Washington Nationals': 'WSH',
+    'Athletics': 'OAK', 'Cleveland Indians': 'CLE'
+};
+
 // DOM Elements
 const datePicker = document.getElementById('date-picker');
 const refreshBtn = document.getElementById('refresh-btn');
@@ -34,7 +49,7 @@ async function fetchGames() {
 
     try {
         const response = await fetch(
-            `${MLB_API_BASE}/schedule?sportId=1&date=${selectedDate}&hydrate=team,linescore,venue`
+            `${MLB_API_BASE}/schedule?sportId=1&date=${selectedDate}&hydrate=team,linescore(runners,defense,offense),venue`
         );
 
         if (!response.ok) {
@@ -50,7 +65,7 @@ async function fetchGames() {
     } catch (error) {
         console.error('Error fetching games:', error);
         gamesContainer.innerHTML = `
-            <div class="no-games" style="grid-column: 1 / -1;">
+            <div class="no-games">
                 <p>Error loading games. Please try again.</p>
             </div>
         `;
@@ -71,7 +86,12 @@ function displayGames(games) {
     gamesContainer.innerHTML = games.map(game => createGameCard(game)).join('');
 }
 
-// Create HTML for a single game card
+// Get team abbreviation
+function getAbbrev(teamName) {
+    return TEAM_ABBREV[teamName] || teamName.substring(0, 3).toUpperCase();
+}
+
+// Create HTML for a single game card with box score
 function createGameCard(game) {
     const status = getGameStatus(game);
     const awayTeam = game.teams.away;
@@ -82,73 +102,119 @@ function createGameCard(game) {
         : '';
 
     const linescore = game.linescore;
-    const inning = linescore?.currentInning;
+    const innings = linescore?.innings || [];
+    const currentInning = linescore?.currentInning;
     const inningState = linescore?.inningState;
 
-    const awayScore = linescore?.teams?.away?.runs ?? '-';
-    const homeScore = linescore?.teams?.home?.runs ?? '-';
+    const awayRuns = linescore?.teams?.away?.runs ?? '-';
+    const homeRuns = linescore?.teams?.home?.runs ?? '-';
+    const awayHits = linescore?.teams?.away?.hits ?? '-';
+    const homeHits = linescore?.teams?.home?.hits ?? '-';
+    const awayErrors = linescore?.teams?.away?.errors ?? '-';
+    const homeErrors = linescore?.teams?.home?.errors ?? '-';
 
     const gameTime = formatGameTime(game.gameDate);
+    const gameDate = formatGameDate(game.gameDate);
 
     // Determine winner for final games
-    const awayWinner = status.type === 'final' && awayScore > homeScore;
-    const homeWinner = status.type === 'final' && homeScore > awayScore;
+    const awayWinner = status.type === 'final' && awayRuns > homeRuns;
+    const homeWinner = status.type === 'final' && homeRuns > awayRuns;
+
+    const awayAbbrev = getAbbrev(awayTeam.team.name);
+    const homeAbbrev = getAbbrev(homeTeam.team.name);
+
+    // For scheduled games, show simpler preview
+    if (status.type === 'scheduled') {
+        return `
+            <div class="game-card">
+                <div class="game-header">
+                    <span class="matchup">${awayAbbrev} at ${homeAbbrev}</span>
+                    <span class="status">${status.text}</span>
+                </div>
+                <div class="scheduled-game">
+                    <div class="teams-preview">
+                        ${awayTeam.team.name}
+                        <span class="at-symbol">@</span>
+                        ${homeTeam.team.name}
+                    </div>
+                    <div class="game-time">${gameTime}</div>
+                    <div class="venue">${venue}${location ? `, ${location}` : ''}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Build inning headers (1-9 minimum, more if extra innings)
+    const numInnings = Math.max(9, innings.length);
+    let inningHeaders = '';
+    let awayInnings = '';
+    let homeInnings = '';
+
+    for (let i = 1; i <= numInnings; i++) {
+        const inning = innings[i - 1];
+        const isExtra = i > 9;
+        inningHeaders += `<th class="inning-col ${isExtra ? 'extra' : ''}">${i}</th>`;
+
+        if (inning) {
+            awayInnings += `<td class="inning-col ${isExtra ? 'extra' : ''}">${inning.away?.runs ?? ''}</td>`;
+            // Home team might not have batted in current inning
+            const homeRun = inning.home?.runs;
+            homeInnings += `<td class="inning-col ${isExtra ? 'extra' : ''}">${homeRun !== undefined ? homeRun : ''}</td>`;
+        } else {
+            awayInnings += `<td class="inning-col ${isExtra ? 'extra' : ''}"></td>`;
+            homeInnings += `<td class="inning-col ${isExtra ? 'extra' : ''}"></td>`;
+        }
+    }
+
+    // Status text with inning info for live games
+    let statusText = status.text;
+    if (status.type === 'live' && currentInning) {
+        statusText = `${inningState} ${currentInning}`;
+    }
 
     return `
         <div class="game-card">
-            <div class="game-status ${status.type}">${status.text}</div>
-            <div class="game-content">
-                <div class="teams">
-                    <div class="team ${awayWinner ? 'winner' : ''}">
-                        <div class="team-info">
-                            <img class="team-logo"
-                                 src="https://www.mlbstatic.com/team-logos/${awayTeam.team.id}.svg"
-                                 alt="${awayTeam.team.name}"
-                                 onerror="this.style.display='none'">
-                            <div>
-                                <div class="team-name">${awayTeam.team.name}</div>
-                                <div class="team-record">${awayTeam.leagueRecord?.wins || 0}-${awayTeam.leagueRecord?.losses || 0}</div>
-                            </div>
-                        </div>
-                        <div class="team-score">${awayScore}</div>
-                    </div>
-                    <div class="team ${homeWinner ? 'winner' : ''}">
-                        <div class="team-info">
-                            <img class="team-logo"
-                                 src="https://www.mlbstatic.com/team-logos/${homeTeam.team.id}.svg"
-                                 alt="${homeTeam.team.name}"
-                                 onerror="this.style.display='none'">
-                            <div>
-                                <div class="team-name">${homeTeam.team.name}</div>
-                                <div class="team-record">${homeTeam.leagueRecord?.wins || 0}-${homeTeam.leagueRecord?.losses || 0}</div>
-                            </div>
-                        </div>
-                        <div class="team-score">${homeScore}</div>
-                    </div>
-                </div>
-                <div class="game-details">
-                    ${inning ? `
-                        <p>
-                            <span class="icon">&#9918;</span>
-                            <strong>Inning:</strong>
-                            <span class="inning-indicator">${inningState} ${inning}</span>
-                        </p>
-                    ` : ''}
-                    <p>
-                        <span class="icon">&#128205;</span>
-                        <strong>Venue:</strong> ${venue}
-                    </p>
-                    ${location ? `
-                        <p>
-                            <span class="icon">&#127968;</span>
-                            <strong>Location:</strong> ${location}
-                        </p>
-                    ` : ''}
-                    <p>
-                        <span class="icon">&#128336;</span>
-                        <strong>Time:</strong> ${gameTime}
-                    </p>
-                </div>
+            <div class="game-header">
+                <span class="matchup">${awayAbbrev} at ${homeAbbrev}</span>
+                <span class="status ${status.type}">${statusText}</span>
+            </div>
+            <table class="box-score">
+                <thead>
+                    <tr>
+                        <th class="team-col">Team</th>
+                        ${inningHeaders}
+                        <th class="total-col">R</th>
+                        <th class="rhe-col">H</th>
+                        <th class="rhe-col">E</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="${awayWinner ? 'winner' : ''}">
+                        <td class="team-col">
+                            <span class="abbrev">${awayAbbrev}</span>
+                            <span class="record">(${awayTeam.leagueRecord?.wins || 0}-${awayTeam.leagueRecord?.losses || 0})</span>
+                        </td>
+                        ${awayInnings}
+                        <td class="total-col">${awayRuns}</td>
+                        <td class="rhe-col">${awayHits}</td>
+                        <td class="rhe-col">${awayErrors}</td>
+                    </tr>
+                    <tr class="${homeWinner ? 'winner' : ''}">
+                        <td class="team-col">
+                            <span class="abbrev">${homeAbbrev}</span>
+                            <span class="record">(${homeTeam.leagueRecord?.wins || 0}-${homeTeam.leagueRecord?.losses || 0})</span>
+                        </td>
+                        ${homeInnings}
+                        <td class="total-col">${homeRuns}</td>
+                        <td class="rhe-col">${homeHits}</td>
+                        <td class="rhe-col">${homeErrors}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="game-info">
+                <span><strong>Venue:</strong> ${venue}</span>
+                ${location ? `<span><strong>Location:</strong> ${location}</span>` : ''}
+                <span><strong>First Pitch:</strong> ${gameTime}</span>
             </div>
         </div>
     `;
@@ -161,12 +227,12 @@ function getGameStatus(game) {
 
     switch (state) {
         case 'Live':
-            return { type: 'live', text: 'LIVE' };
+            return { type: 'live', text: 'IN PROGRESS' };
         case 'Final':
-            return { type: 'final', text: detailedState || 'Final' };
+            return { type: 'final', text: detailedState || 'FINAL' };
         case 'Preview':
         default:
-            return { type: 'scheduled', text: detailedState || 'Scheduled' };
+            return { type: 'scheduled', text: detailedState || 'SCHEDULED' };
     }
 }
 
@@ -177,6 +243,17 @@ function formatGameTime(dateString) {
         hour: 'numeric',
         minute: '2-digit',
         timeZoneName: 'short'
+    });
+}
+
+// Format game date
+function formatGameDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
     });
 }
 
@@ -192,7 +269,7 @@ function showLoading(show) {
 // Update last updated timestamp
 function updateLastUpdated() {
     const now = new Date();
-    lastUpdated.textContent = `Last updated: ${now.toLocaleTimeString()}`;
+    lastUpdated.textContent = `Edition: ${now.toLocaleTimeString()}`;
 }
 
 // Start the app

@@ -3,25 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Baseball Stats</title>
+    <title>The Baseball Chronicle</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Live Baseball Stats</h1>
-            <p class="subtitle">MLB Game Tracker</p>
+            <h1>The Baseball Chronicle</h1>
+            <p class="subtitle">~ Your Daily Source for Diamond News ~</p>
+            <div class="edition-info">
+                <span>National Edition</span>
+                <span id="current-date"></span>
+                <span>50 Cents</span>
+            </div>
         </header>
 
         <div class="controls">
             <input type="date" id="date-picker" />
-            <button id="refresh-btn">Refresh</button>
+            <button id="refresh-btn">Update Scores</button>
             <span id="last-updated"></span>
         </div>
 
+        <div class="section-header">Box Scores</div>
+
         <div id="loading" class="loading">
-            <div class="spinner"></div>
-            <p>Loading games...</p>
+            <p>Fetching latest scores from the wire...</p>
         </div>
 
         <div id="no-games" class="no-games" style="display: none;">
@@ -29,8 +35,22 @@
         </div>
 
         <div id="games-container" class="games-container"></div>
+
+        <footer class="page-footer">
+            <p>Scores provided by Major League Baseball. All times local.</p>
+        </footer>
     </div>
 
+    <script>
+        // Set current date in header
+        document.getElementById('current-date').textContent =
+            new Date().toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+    </script>
     <script src="app.js"></script>
 </body>
 </html>
