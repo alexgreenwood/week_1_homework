@@ -9,7 +9,7 @@ body {
     background: #d4d0c8;
     min-height: 100vh;
     color: #1a1a1a;
-    line-height: 1.4;
+    line-height: 1.3;
 }
 
 .container {
@@ -29,7 +29,6 @@ body {
     background: #fff;
 }
 
-/* Red and white stripes */
 .stripe-top,
 .stripe-bottom {
     height: 8px;
@@ -39,7 +38,6 @@ body {
         #cc2027 66%, #cc2027 100%);
 }
 
-/* Blue banner */
 .masthead-banner {
     background: #003d7a;
     display: flex;
@@ -147,11 +145,6 @@ body {
    CONTENT AREA
    ======================================== */
 
-.content-area {
-    padding: 20px;
-}
-
-/* Loading */
 .loading {
     text-align: center;
     padding: 40px 20px;
@@ -163,14 +156,6 @@ body {
     display: none;
 }
 
-.loading p::before {
-    content: "~ ";
-}
-
-.loading p::after {
-    content: " ~";
-}
-
 .no-games {
     text-align: center;
     padding: 40px 20px;
@@ -180,7 +165,6 @@ body {
     border: 1px dashed #999;
 }
 
-/* Section Header */
 .section-header {
     font-size: 1.3rem;
     font-weight: bold;
@@ -205,7 +189,10 @@ body {
     background: #f5f3eb;
 }
 
-/* Individual Game Box Score */
+/* ========================================
+   GAME CARD - NEWSPAPER STYLE
+   ======================================== */
+
 .game-card {
     border: 1px solid #1a1a1a;
     background: #fff;
@@ -216,11 +203,245 @@ body {
     margin-bottom: 0;
 }
 
-.game-card:hover {
-    background: #fefefe;
+/* Game Title Bar */
+.game-title-bar {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-/* Game Header */
+.game-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.game-title-bar .status {
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+.game-title-bar .status.live {
+    color: #ffcc00;
+    font-style: normal;
+    font-weight: bold;
+}
+
+.game-title-bar .status.live::before {
+    content: "● ";
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+/* ========================================
+   COMPACT LINESCORE (Newspaper Style)
+   ======================================== */
+
+.linescore-compact {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.linescore-row {
+    display: flex;
+    align-items: baseline;
+    padding: 4px 0;
+    border-bottom: 1px dotted #ccc;
+}
+
+.linescore-row:last-child {
+    border-bottom: none;
+}
+
+.linescore-row .team-name {
+    flex: 0 0 140px;
+    font-weight: normal;
+}
+
+.linescore-row .innings {
+    flex: 1;
+    text-align: right;
+    font-family: 'Courier New', Courier, monospace;
+    letter-spacing: 2px;
+}
+
+.linescore-row .inning-group {
+    margin-right: 8px;
+}
+
+.linescore-row .inning-score {
+    display: inline-block;
+    width: 14px;
+    text-align: center;
+}
+
+.linescore-row .total {
+    flex: 0 0 40px;
+    text-align: right;
+    font-weight: bold;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.linescore-row .rhe {
+    flex: 0 0 25px;
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* ========================================
+   EXPAND BUTTON
+   ======================================== */
+
+.expand-section {
+    padding: 8px 12px;
+    text-align: center;
+    background: #f8f7f3;
+    border-top: 1px solid #ddd;
+}
+
+.expand-btn {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 0.85rem;
+    padding: 6px 20px;
+    background: #fff;
+    border: 1px solid #333;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.expand-btn:hover {
+    background: #f0f0f0;
+}
+
+.expand-btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+/* ========================================
+   PLAYER STATS CONTAINER (Expandable)
+   ======================================== */
+
+.player-stats-container {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.player-stats-container.expanded {
+    max-height: 2000px;
+    transition: max-height 0.5s ease-in;
+}
+
+.player-stats {
+    padding: 15px 12px;
+    background: #fafaf7;
+    border-top: 2px solid #1a1a1a;
+}
+
+/* ========================================
+   BATTING STATS TABLE
+   ======================================== */
+
+.batting-stats {
+    margin-bottom: 20px;
+}
+
+.stats-columns {
+    display: flex;
+    gap: 20px;
+}
+
+.stats-column {
+    flex: 1;
+}
+
+.player-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+}
+
+.player-table th,
+.player-table td {
+    padding: 3px 6px;
+    text-align: right;
+    border-bottom: 1px dotted #ccc;
+}
+
+.player-table th {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    border-bottom: 1px solid #1a1a1a;
+    padding-bottom: 5px;
+}
+
+.player-table .player-name-col {
+    text-align: left;
+    width: 55%;
+}
+
+.player-table .totals-row td {
+    border-top: 1px solid #1a1a1a;
+    border-bottom: none;
+    padding-top: 5px;
+}
+
+/* ========================================
+   PITCHING STATS TABLE
+   ======================================== */
+
+.pitching-stats {
+    border-top: 2px solid #1a1a1a;
+    padding-top: 15px;
+}
+
+.pitcher-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    margin-bottom: 15px;
+}
+
+.pitcher-table:last-child {
+    margin-bottom: 0;
+}
+
+.pitcher-table th,
+.pitcher-table td {
+    padding: 3px 6px;
+    text-align: right;
+    border-bottom: 1px dotted #ccc;
+}
+
+.pitcher-table th {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    border-bottom: 1px solid #1a1a1a;
+    padding-bottom: 5px;
+}
+
+.pitcher-table .pitcher-name-col {
+    text-align: left;
+    width: 40%;
+}
+
+/* ========================================
+   SCHEDULED GAME
+   ======================================== */
+
 .game-header {
     display: flex;
     justify-content: space-between;
@@ -241,118 +462,6 @@ body {
     font-size: 0.8rem;
     font-style: italic;
 }
-
-.game-header .status.live {
-    font-weight: bold;
-    font-style: normal;
-    color: #ffcc00;
-}
-
-.game-header .status.live::before {
-    content: "● ";
-    animation: blink 1s infinite;
-}
-
-@keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
-}
-
-/* ========================================
-   BOX SCORE TABLE
-   ======================================== */
-
-.box-score {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
-}
-
-.box-score th,
-.box-score td {
-    padding: 5px 6px;
-    text-align: center;
-    border: 1px solid #bbb;
-}
-
-.box-score th {
-    background: #e0ddd4;
-    font-weight: bold;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    color: #333;
-}
-
-.box-score .team-col {
-    text-align: left;
-    font-weight: bold;
-    width: 130px;
-    background: #f0ede4;
-}
-
-.box-score .team-col .abbrev {
-    font-size: 0.95rem;
-}
-
-.box-score .team-col .record {
-    font-size: 0.7rem;
-    font-weight: normal;
-    color: #666;
-}
-
-.box-score .inning-col {
-    width: 26px;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 0.85rem;
-}
-
-.box-score .total-col {
-    width: 32px;
-    font-weight: bold;
-    background: #e8e5dc;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 1rem;
-}
-
-.box-score .rhe-col {
-    width: 28px;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 0.85rem;
-}
-
-.box-score tr.winner .team-col {
-    background: #e5e2d5;
-}
-
-.box-score tr.winner .total-col {
-    background: #d8d5c8;
-}
-
-/* Game Info Footer */
-.game-info {
-    padding: 8px 12px;
-    border-top: 1px solid #ccc;
-    font-size: 0.8rem;
-    color: #444;
-    background: #fafaf7;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-}
-
-.game-info span {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.game-info strong {
-    font-weight: bold;
-}
-
-/* ========================================
-   SCHEDULED GAME
-   ======================================== */
 
 .scheduled-game {
     padding: 20px;
@@ -398,6 +507,13 @@ body {
 /* ========================================
    RESPONSIVE
    ======================================== */
+
+@media (max-width: 700px) {
+    .stats-columns {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
 
 @media (max-width: 600px) {
     .masthead-center h1 {
@@ -446,30 +562,23 @@ body {
         padding: 10px;
     }
 
-    .box-score {
+    .linescore-row .team-name {
+        flex: 0 0 100px;
+        font-size: 0.8rem;
+    }
+
+    .linescore-row .innings {
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+    }
+
+    .linescore-row .inning-score {
+        width: 12px;
+    }
+
+    .player-table,
+    .pitcher-table {
         font-size: 0.7rem;
-    }
-
-    .box-score th,
-    .box-score td {
-        padding: 3px 2px;
-    }
-
-    .box-score .team-col {
-        width: 70px;
-    }
-
-    .box-score .inning-col {
-        width: 18px;
-    }
-
-    .box-score .total-col {
-        width: 24px;
-    }
-
-    .game-info {
-        flex-direction: column;
-        gap: 4px;
     }
 
     .section-header {
@@ -478,12 +587,7 @@ body {
     }
 }
 
-/* Extra small screens - hide extra innings */
 @media (max-width: 400px) {
-    .box-score .inning-col.extra {
-        display: none;
-    }
-
     .masthead-left {
         display: none;
     }
@@ -497,6 +601,15 @@ body {
 
     .masthead-banner {
         position: relative;
+    }
+
+    .linescore-row .team-name {
+        flex: 0 0 80px;
+        font-size: 0.75rem;
+    }
+
+    .linescore-row .inning-group {
+        margin-right: 4px;
     }
 }
 
@@ -518,14 +631,11 @@ body {
         display: none;
     }
 
-    .stripe-top,
-    .stripe-bottom {
-        print-color-adjust: exact;
-        -webkit-print-color-adjust: exact;
+    .expand-section {
+        display: none;
     }
 
-    .masthead-banner {
-        print-color-adjust: exact;
-        -webkit-print-color-adjust: exact;
+    .player-stats-container {
+        max-height: none !important;
     }
 }
