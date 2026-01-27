@@ -194,7 +194,7 @@ body {
    ======================================== */
 
 .game-card {
-    border: 1px solid #1a1a1a;
+    border: none;
     background: #fff;
     margin-bottom: 15px;
 }
@@ -207,7 +207,7 @@ body {
 .game-title-bar {
     background: #fff;
     padding: 10px 15px;
-    border-bottom: 2px solid #1a1a1a;
+    border-bottom: 1px solid #ccc;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -218,6 +218,7 @@ body {
     font-size: 1.3rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    color: #1a1a1a;
 }
 
 .game-title-bar .status {
@@ -257,9 +258,10 @@ body {
     font-size: 0.9rem;
     padding: 8px 24px;
     background: #fff;
-    border: 1px solid #1a1a1a;
+    border: 1px solid #ccc;
     cursor: pointer;
     letter-spacing: 0.5px;
+    color: #1a1a1a;
 }
 
 .expand-btn:hover {
@@ -293,7 +295,8 @@ body {
 .newspaper-boxscore {
     padding: 15px;
     background: #fff;
-    border-top: 1px solid #ddd;
+    border-top: none;
+    color: #1a1a1a;
 }
 
 /* Batting Section */
@@ -312,12 +315,14 @@ body {
     padding: 2px 4px;
     text-align: right;
     vertical-align: top;
+    color: #1a1a1a;
 }
 
 .batting-table th {
     font-weight: bold;
-    border-bottom: 1px solid #1a1a1a;
+    border-bottom: 1px solid #999;
     padding-bottom: 4px;
+    color: #1a1a1a;
 }
 
 .batting-table td {
@@ -337,15 +342,16 @@ body {
 
 .batting-table .totals-row td {
     font-weight: bold;
-    border-top: 1px solid #1a1a1a;
+    border-top: 1px solid #999;
     padding-top: 4px;
+    color: #1a1a1a;
 }
 
 /* Linescore Section */
 .linescore-section {
     padding: 12px 0;
-    border-top: 2px solid #1a1a1a;
-    border-bottom: 2px solid #1a1a1a;
+    border-top: 1px solid #999;
+    border-bottom: 1px solid #999;
     margin-bottom: 15px;
 }
 
@@ -353,10 +359,12 @@ body {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.9rem;
+    color: #1a1a1a;
 }
 
 .linescore-table td {
     padding: 3px 0;
+    color: #1a1a1a;
 }
 
 .linescore-table .ls-team {
@@ -409,12 +417,14 @@ body {
 .pitching-table td {
     padding: 2px 4px;
     text-align: right;
+    color: #1a1a1a;
 }
 
 .pitching-table th {
     font-weight: bold;
-    border-bottom: 1px solid #1a1a1a;
+    border-bottom: 1px solid #999;
     padding-bottom: 4px;
+    color: #1a1a1a;
 }
 
 .pitching-table .pitcher-col {
