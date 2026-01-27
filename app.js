@@ -91,7 +91,7 @@ async function fetchBoxscore(gamePk) {
 }
 
 // Toggle player stats visibility
-async function togglePlayerStats(gamePk, awayName, homeName) {
+async function togglePlayerStats(gamePk, awayName, homeName, awayRuns, homeRuns, linescoreHTML) {
     const statsContainer = document.getElementById(`stats-${gamePk}`);
     const toggleBtn = document.getElementById(`toggle-${gamePk}`);
 
@@ -107,7 +107,7 @@ async function togglePlayerStats(gamePk, awayName, homeName) {
     const boxscore = await fetchBoxscore(gamePk);
 
     if (boxscore) {
-        statsContainer.innerHTML = createPlayerStatsHTML(boxscore, awayName, homeName);
+        statsContainer.innerHTML = createPlayerStatsHTML(boxscore, awayName, homeName, awayRuns, homeRuns, linescoreHTML);
         statsContainer.classList.add('expanded');
         toggleBtn.textContent = 'Hide Player Stats';
     } else {
@@ -117,8 +117,8 @@ async function togglePlayerStats(gamePk, awayName, homeName) {
     toggleBtn.disabled = false;
 }
 
-// Create player stats HTML
-function createPlayerStatsHTML(boxscore, awayName, homeName) {
+// Create player stats HTML matching newspaper style
+function createPlayerStatsHTML(boxscore, awayName, homeName, awayRuns, homeRuns, linescoreHTML) {
     const awayBatters = boxscore.teams.away.batters || [];
     const homeBatters = boxscore.teams.home.batters || [];
     const awayPitchers = boxscore.teams.away.pitchers || [];
@@ -136,7 +136,7 @@ function createPlayerStatsHTML(boxscore, awayName, homeName) {
         const stats = player.stats.batting;
         return {
             name: formatPlayerName(player.person.fullName),
-            position: player.position.abbreviation,
+            position: player.position.abbreviation.toLowerCase(),
             ab: stats.atBats ?? 0,
             r: stats.runs ?? 0,
             h: stats.hits ?? 0,
@@ -151,7 +151,7 @@ function createPlayerStatsHTML(boxscore, awayName, homeName) {
         const stats = player.stats.batting;
         return {
             name: formatPlayerName(player.person.fullName),
-            position: player.position.abbreviation,
+            position: player.position.abbreviation.toLowerCase(),
             ab: stats.atBats ?? 0,
             r: stats.runs ?? 0,
             h: stats.hits ?? 0,
@@ -165,9 +165,11 @@ function createPlayerStatsHTML(boxscore, awayName, homeName) {
         const player = players[`ID${id}`];
         if (!player || !player.stats.pitching) return null;
         const stats = player.stats.pitching;
+        const seasonStats = player.seasonStats?.pitching || {};
         return {
             name: formatPlayerName(player.person.fullName),
             decision: getPitchingDecision(stats),
+            record: `${seasonStats.wins || 0}-${seasonStats.losses || 0}`,
             ip: stats.inningsPitched || '0',
             h: stats.hits ?? 0,
             r: stats.runs ?? 0,
@@ -175,7 +177,7 @@ function createPlayerStatsHTML(boxscore, awayName, homeName) {
             bb: stats.baseOnBalls ?? 0,
             so: stats.strikeOuts ?? 0,
             np: stats.numberOfPitches ?? 0,
-            era: player.seasonStats?.pitching?.era || '0.00'
+            era: seasonStats.era || '0.00'
         };
     }).filter(Boolean);
 
@@ -183,9 +185,11 @@ function createPlayerStatsHTML(boxscore, awayName, homeName) {
         const player = homePlayers[`ID${id}`];
         if (!player || !player.stats.pitching) return null;
         const stats = player.stats.pitching;
+        const seasonStats = player.seasonStats?.pitching || {};
         return {
             name: formatPlayerName(player.person.fullName),
             decision: getPitchingDecision(stats),
+            record: `${seasonStats.wins || 0}-${seasonStats.losses || 0}`,
             ip: stats.inningsPitched || '0',
             h: stats.hits ?? 0,
             r: stats.runs ?? 0,
@@ -193,7 +197,7 @@ function createPlayerStatsHTML(boxscore, awayName, homeName) {
             bb: stats.baseOnBalls ?? 0,
             so: stats.strikeOuts ?? 0,
             np: stats.numberOfPitches ?? 0,
-            era: player.seasonStats?.pitching?.era || '0.00'
+            era: seasonStats.era || '0.00'
         };
     }).filter(Boolean);
 
@@ -202,91 +206,66 @@ function createPlayerStatsHTML(boxscore, awayName, homeName) {
     const homeBatTotals = calculateBattingTotals(homeBattingStats);
 
     return `
-        <div class="player-stats">
-            <div class="batting-stats">
-                <div class="stats-columns">
-                    <div class="stats-column">
-                        <table class="player-table">
-                            <thead>
-                                <tr>
-                                    <th class="player-name-col">${awayAbbrev}</th>
-                                    <th>AB</th>
-                                    <th>R</th>
-                                    <th>H</th>
-                                    <th>BI</th>
-                                    <th>Avg.</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${awayBattingStats.map(p => `
-                                    <tr>
-                                        <td class="player-name-col">${p.name} ${p.position.toLowerCase()}</td>
-                                        <td>${p.ab}</td>
-                                        <td>${p.r}</td>
-                                        <td>${p.h}</td>
-                                        <td>${p.rbi}</td>
-                                        <td>${p.avg}</td>
-                                    </tr>
-                                `).join('')}
-                                <tr class="totals-row">
-                                    <td class="player-name-col">Totals</td>
-                                    <td><strong>${awayBatTotals.ab}</strong></td>
-                                    <td><strong>${awayBatTotals.r}</strong></td>
-                                    <td><strong>${awayBatTotals.h}</strong></td>
-                                    <td><strong>${awayBatTotals.rbi}</strong></td>
-                                    <td></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="stats-column">
-                        <table class="player-table">
-                            <thead>
-                                <tr>
-                                    <th class="player-name-col">${homeAbbrev}</th>
-                                    <th>AB</th>
-                                    <th>R</th>
-                                    <th>H</th>
-                                    <th>BI</th>
-                                    <th>Avg.</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${homeBattingStats.map(p => `
-                                    <tr>
-                                        <td class="player-name-col">${p.name} ${p.position.toLowerCase()}</td>
-                                        <td>${p.ab}</td>
-                                        <td>${p.r}</td>
-                                        <td>${p.h}</td>
-                                        <td>${p.rbi}</td>
-                                        <td>${p.avg}</td>
-                                    </tr>
-                                `).join('')}
-                                <tr class="totals-row">
-                                    <td class="player-name-col">Totals</td>
-                                    <td><strong>${homeBatTotals.ab}</strong></td>
-                                    <td><strong>${homeBatTotals.r}</strong></td>
-                                    <td><strong>${homeBatTotals.h}</strong></td>
-                                    <td><strong>${homeBatTotals.rbi}</strong></td>
-                                    <td></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pitching-stats">
-                <table class="pitcher-table">
+        <div class="newspaper-boxscore">
+            <!-- Batting Stats Side by Side -->
+            <div class="batting-section">
+                <table class="batting-table">
                     <thead>
                         <tr>
-                            <th class="pitcher-name-col">${awayAbbrev}</th>
+                            <th class="name-col">${awayAbbrev}</th>
+                            <th>AB</th>
+                            <th>R</th>
+                            <th>H</th>
+                            <th>BI</th>
+                            <th>Avg.</th>
+                            <th class="spacer"></th>
+                            <th class="name-col">${homeAbbrev}</th>
+                            <th>AB</th>
+                            <th>R</th>
+                            <th>H</th>
+                            <th>BI</th>
+                            <th>Avg.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${createBattingRows(awayBattingStats, homeBattingStats)}
+                        <tr class="totals-row">
+                            <td class="name-col">Totals</td>
+                            <td><b>${awayBatTotals.ab}</b></td>
+                            <td><b>${awayBatTotals.r}</b></td>
+                            <td><b>${awayBatTotals.h}</b></td>
+                            <td><b>${awayBatTotals.rbi}</b></td>
+                            <td></td>
+                            <td class="spacer"></td>
+                            <td class="name-col">Totals</td>
+                            <td><b>${homeBatTotals.ab}</b></td>
+                            <td><b>${homeBatTotals.r}</b></td>
+                            <td><b>${homeBatTotals.h}</b></td>
+                            <td><b>${homeBatTotals.rbi}</b></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Linescore -->
+            <div class="linescore-section">
+                ${linescoreHTML}
+            </div>
+
+            <!-- Pitching Stats -->
+            <div class="pitching-section">
+                <table class="pitching-table">
+                    <thead>
+                        <tr>
+                            <th class="pitcher-col">${awayAbbrev}</th>
                             <th>IP</th>
                             <th>H</th>
                             <th>R</th>
                             <th>ER</th>
                             <th>BB</th>
                             <th>SO</th>
+                            <th class="spacer-small"></th>
                             <th>NP</th>
                             <th>ERA</th>
                         </tr>
@@ -294,13 +273,14 @@ function createPlayerStatsHTML(boxscore, awayName, homeName) {
                     <tbody>
                         ${awayPitchingStats.map(p => `
                             <tr>
-                                <td class="pitcher-name-col">${p.name}${p.decision}</td>
+                                <td class="pitcher-col">${p.name}${p.decision ? `, ${p.decision}, ${p.record}` : ''}</td>
                                 <td>${p.ip}</td>
                                 <td>${p.h}</td>
                                 <td>${p.r}</td>
                                 <td>${p.er}</td>
                                 <td>${p.bb}</td>
                                 <td>${p.so}</td>
+                                <td class="spacer-small"></td>
                                 <td>${p.np}</td>
                                 <td>${p.era}</td>
                             </tr>
@@ -308,16 +288,17 @@ function createPlayerStatsHTML(boxscore, awayName, homeName) {
                     </tbody>
                 </table>
 
-                <table class="pitcher-table">
+                <table class="pitching-table">
                     <thead>
                         <tr>
-                            <th class="pitcher-name-col">${homeAbbrev}</th>
+                            <th class="pitcher-col">${homeAbbrev}</th>
                             <th>IP</th>
                             <th>H</th>
                             <th>R</th>
                             <th>ER</th>
                             <th>BB</th>
                             <th>SO</th>
+                            <th class="spacer-small"></th>
                             <th>NP</th>
                             <th>ERA</th>
                         </tr>
@@ -325,13 +306,14 @@ function createPlayerStatsHTML(boxscore, awayName, homeName) {
                     <tbody>
                         ${homePitchingStats.map(p => `
                             <tr>
-                                <td class="pitcher-name-col">${p.name}${p.decision}</td>
+                                <td class="pitcher-col">${p.name}${p.decision ? `, ${p.decision}, ${p.record}` : ''}</td>
                                 <td>${p.ip}</td>
                                 <td>${p.h}</td>
                                 <td>${p.r}</td>
                                 <td>${p.er}</td>
                                 <td>${p.bb}</td>
                                 <td>${p.so}</td>
+                                <td class="spacer-small"></td>
                                 <td>${p.np}</td>
                                 <td>${p.era}</td>
                             </tr>
@@ -341,6 +323,53 @@ function createPlayerStatsHTML(boxscore, awayName, homeName) {
             </div>
         </div>
     `;
+}
+
+// Create batting rows side by side
+function createBattingRows(awayStats, homeStats) {
+    const maxRows = Math.max(awayStats.length, homeStats.length);
+    let html = '';
+
+    for (let i = 0; i < maxRows; i++) {
+        const away = awayStats[i];
+        const home = homeStats[i];
+
+        html += '<tr>';
+
+        // Away team
+        if (away) {
+            html += `
+                <td class="name-col">${away.name} ${away.position}</td>
+                <td>${away.ab}</td>
+                <td>${away.r}</td>
+                <td>${away.h}</td>
+                <td>${away.rbi}</td>
+                <td>${away.avg}</td>
+            `;
+        } else {
+            html += '<td></td><td></td><td></td><td></td><td></td><td></td>';
+        }
+
+        html += '<td class="spacer"></td>';
+
+        // Home team
+        if (home) {
+            html += `
+                <td class="name-col">${home.name} ${home.position}</td>
+                <td>${home.ab}</td>
+                <td>${home.r}</td>
+                <td>${home.h}</td>
+                <td>${home.rbi}</td>
+                <td>${home.avg}</td>
+            `;
+        } else {
+            html += '<td></td><td></td><td></td><td></td><td></td><td></td>';
+        }
+
+        html += '</tr>';
+    }
+
+    return html;
 }
 
 // Helper functions
@@ -353,11 +382,11 @@ function formatPlayerName(fullName) {
 }
 
 function getPitchingDecision(stats) {
-    if (stats.wins > 0) return `, W`;
-    if (stats.losses > 0) return `, L`;
-    if (stats.saves > 0) return `, S`;
-    if (stats.holds > 0) return `, H`;
-    if (stats.blownSaves > 0) return `, BS`;
+    if (stats.wins > 0) return 'W';
+    if (stats.losses > 0) return 'L';
+    if (stats.saves > 0) return 'S';
+    if (stats.holds > 0) return 'H';
+    if (stats.blownSaves > 0) return 'BS';
     return '';
 }
 
@@ -431,37 +460,24 @@ function createGameCard(game) {
         `;
     }
 
-    // Build inning-by-inning display
+    // Build inning-by-inning display for linescore
     const numInnings = Math.max(9, innings.length);
-    let inningScores = '';
+
+    // Create inning scores grouped
+    let awayInningScores = '';
+    let homeInningScores = '';
 
     for (let i = 1; i <= numInnings; i++) {
         const inning = innings[i - 1];
         const awayScore = inning?.away?.runs ?? '';
         const homeScore = inning?.home?.runs ?? '';
 
-        // Group innings into sets of 3
-        if (i === 1 || i === 4 || i === 7 || i === 10) {
-            inningScores += '<span class="inning-group">';
+        if (i === 4 || i === 7 || i === 10) {
+            awayInningScores += '&nbsp;&nbsp;';
+            homeInningScores += '&nbsp;&nbsp;';
         }
-        inningScores += `<span class="inning-score">${awayScore}</span>`;
-        if (i === 3 || i === 6 || i === 9 || i === numInnings) {
-            inningScores += '</span>';
-        }
-    }
-
-    let homeInningScores = '';
-    for (let i = 1; i <= numInnings; i++) {
-        const inning = innings[i - 1];
-        const homeScore = inning?.home?.runs ?? '';
-
-        if (i === 1 || i === 4 || i === 7 || i === 10) {
-            homeInningScores += '<span class="inning-group">';
-        }
-        homeInningScores += `<span class="inning-score">${homeScore}</span>`;
-        if (i === 3 || i === 6 || i === 9 || i === numInnings) {
-            homeInningScores += '</span>';
-        }
+        awayInningScores += `<span class="inn">${awayScore}</span>`;
+        homeInningScores += `<span class="inn">${homeScore}</span>`;
     }
 
     // Status text
@@ -472,6 +488,31 @@ function createGameCard(game) {
 
     const showExpandBtn = status.type === 'final' || status.type === 'live';
 
+    // Linescore HTML for embedding in expanded view
+    const linescoreHTML = `
+        <table class="linescore-table">
+            <tbody>
+                <tr>
+                    <td class="ls-team">${awayTeam.team.name}</td>
+                    <td class="ls-innings">${awayInningScores}</td>
+                    <td class="ls-dash">&mdash;${awayRuns}</td>
+                    <td class="ls-rhe">${awayHits}</td>
+                    <td class="ls-rhe">${awayErrors}</td>
+                </tr>
+                <tr>
+                    <td class="ls-team">${homeTeam.team.name}</td>
+                    <td class="ls-innings">${homeInningScores}</td>
+                    <td class="ls-dash">&mdash;${homeRuns}</td>
+                    <td class="ls-rhe">${homeHits}</td>
+                    <td class="ls-rhe">${homeErrors}</td>
+                </tr>
+            </tbody>
+        </table>
+    `;
+
+    // Escape the linescore HTML for passing to function
+    const escapedLinescore = linescoreHTML.replace(/'/g, "\\'").replace(/\n/g, '').replace(/\s+/g, ' ');
+
     return `
         <div class="game-card">
             <div class="game-title-bar">
@@ -479,27 +520,10 @@ function createGameCard(game) {
                 <span class="status ${status.type}">${statusText}</span>
             </div>
 
-            <div class="linescore-compact">
-                <div class="linescore-row">
-                    <span class="team-name">${awayTeam.team.name}</span>
-                    <span class="innings">${inningScores}</span>
-                    <span class="total">&mdash;${awayRuns}</span>
-                    <span class="rhe">${awayHits}</span>
-                    <span class="rhe">${awayErrors}</span>
-                </div>
-                <div class="linescore-row">
-                    <span class="team-name">${homeTeam.team.name}</span>
-                    <span class="innings">${homeInningScores}</span>
-                    <span class="total">&mdash;${homeRuns}</span>
-                    <span class="rhe">${homeHits}</span>
-                    <span class="rhe">${homeErrors}</span>
-                </div>
-            </div>
-
             ${showExpandBtn ? `
                 <div class="expand-section">
                     <button class="expand-btn" id="toggle-${gamePk}"
-                            onclick="togglePlayerStats(${gamePk}, '${awayTeam.team.name}', '${homeTeam.team.name}')">
+                            onclick="togglePlayerStats(${gamePk}, '${awayTeam.team.name}', '${homeTeam.team.name}', ${awayRuns}, ${homeRuns}, '${escapedLinescore}')">
                         Show Player Stats
                     </button>
                 </div>

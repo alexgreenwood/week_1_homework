@@ -203,11 +203,11 @@ body {
     margin-bottom: 0;
 }
 
-/* Game Title Bar */
+/* Game Title Bar - Bold headline style */
 .game-title-bar {
-    background: #1a1a1a;
-    color: #fff;
-    padding: 8px 12px;
+    background: #fff;
+    padding: 10px 15px;
+    border-bottom: 2px solid #1a1a1a;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -215,18 +215,19 @@ body {
 
 .game-title {
     font-weight: bold;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
 }
 
 .game-title-bar .status {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-style: italic;
+    color: #666;
 }
 
 .game-title-bar .status.live {
-    color: #ffcc00;
+    color: #cc2027;
     font-style: normal;
     font-weight: bold;
 }
@@ -242,81 +243,23 @@ body {
 }
 
 /* ========================================
-   COMPACT LINESCORE (Newspaper Style)
-   ======================================== */
-
-.linescore-compact {
-    padding: 10px 12px;
-    font-size: 0.9rem;
-    border-bottom: 1px solid #ddd;
-}
-
-.linescore-row {
-    display: flex;
-    align-items: baseline;
-    padding: 4px 0;
-    border-bottom: 1px dotted #ccc;
-}
-
-.linescore-row:last-child {
-    border-bottom: none;
-}
-
-.linescore-row .team-name {
-    flex: 0 0 140px;
-    font-weight: normal;
-}
-
-.linescore-row .innings {
-    flex: 1;
-    text-align: right;
-    font-family: 'Courier New', Courier, monospace;
-    letter-spacing: 2px;
-}
-
-.linescore-row .inning-group {
-    margin-right: 8px;
-}
-
-.linescore-row .inning-score {
-    display: inline-block;
-    width: 14px;
-    text-align: center;
-}
-
-.linescore-row .total {
-    flex: 0 0 40px;
-    text-align: right;
-    font-weight: bold;
-    font-family: 'Courier New', Courier, monospace;
-}
-
-.linescore-row .rhe {
-    flex: 0 0 25px;
-    text-align: center;
-    font-family: 'Courier New', Courier, monospace;
-}
-
-/* ========================================
    EXPAND BUTTON
    ======================================== */
 
 .expand-section {
-    padding: 8px 12px;
+    padding: 10px 15px;
     text-align: center;
-    background: #f8f7f3;
-    border-top: 1px solid #ddd;
+    background: #fff;
 }
 
 .expand-btn {
     font-family: 'Times New Roman', Times, serif;
-    font-size: 0.85rem;
-    padding: 6px 20px;
+    font-size: 0.9rem;
+    padding: 8px 24px;
     background: #fff;
-    border: 1px solid #333;
+    border: 1px solid #1a1a1a;
     cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
 }
 
 .expand-btn:hover {
@@ -339,103 +282,148 @@ body {
 }
 
 .player-stats-container.expanded {
-    max-height: 2000px;
+    max-height: 3000px;
     transition: max-height 0.5s ease-in;
 }
 
-.player-stats {
-    padding: 15px 12px;
-    background: #fafaf7;
-    border-top: 2px solid #1a1a1a;
-}
-
 /* ========================================
-   BATTING STATS TABLE
+   NEWSPAPER BOXSCORE LAYOUT
    ======================================== */
 
-.batting-stats {
-    margin-bottom: 20px;
+.newspaper-boxscore {
+    padding: 15px;
+    background: #fff;
+    border-top: 1px solid #ddd;
 }
 
-.stats-columns {
-    display: flex;
-    gap: 20px;
-}
-
-.stats-column {
-    flex: 1;
-}
-
-.player-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.8rem;
-}
-
-.player-table th,
-.player-table td {
-    padding: 3px 6px;
-    text-align: right;
-    border-bottom: 1px dotted #ccc;
-}
-
-.player-table th {
-    font-weight: bold;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    border-bottom: 1px solid #1a1a1a;
-    padding-bottom: 5px;
-}
-
-.player-table .player-name-col {
-    text-align: left;
-    width: 55%;
-}
-
-.player-table .totals-row td {
-    border-top: 1px solid #1a1a1a;
-    border-bottom: none;
-    padding-top: 5px;
-}
-
-/* ========================================
-   PITCHING STATS TABLE
-   ======================================== */
-
-.pitching-stats {
-    border-top: 2px solid #1a1a1a;
-    padding-top: 15px;
-}
-
-.pitcher-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.8rem;
+/* Batting Section */
+.batting-section {
     margin-bottom: 15px;
 }
 
-.pitcher-table:last-child {
+.batting-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.batting-table th,
+.batting-table td {
+    padding: 2px 4px;
+    text-align: right;
+    vertical-align: top;
+}
+
+.batting-table th {
+    font-weight: bold;
+    border-bottom: 1px solid #1a1a1a;
+    padding-bottom: 4px;
+}
+
+.batting-table td {
+    border-bottom: none;
+}
+
+.batting-table .name-col {
+    text-align: left;
+    width: 120px;
+    white-space: nowrap;
+}
+
+.batting-table .spacer {
+    width: 20px;
+    border-bottom: none !important;
+}
+
+.batting-table .totals-row td {
+    font-weight: bold;
+    border-top: 1px solid #1a1a1a;
+    padding-top: 4px;
+}
+
+/* Linescore Section */
+.linescore-section {
+    padding: 12px 0;
+    border-top: 2px solid #1a1a1a;
+    border-bottom: 2px solid #1a1a1a;
+    margin-bottom: 15px;
+}
+
+.linescore-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.linescore-table td {
+    padding: 3px 0;
+}
+
+.linescore-table .ls-team {
+    width: 140px;
+    text-align: left;
+}
+
+.linescore-table .ls-innings {
+    text-align: right;
+    font-family: 'Courier New', Courier, monospace;
+    letter-spacing: 1px;
+}
+
+.linescore-table .ls-innings .inn {
+    display: inline-block;
+    width: 14px;
+    text-align: center;
+}
+
+.linescore-table .ls-dash {
+    width: 45px;
+    text-align: right;
+    font-weight: bold;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.linescore-table .ls-rhe {
+    width: 30px;
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Pitching Section */
+.pitching-section {
+    margin-top: 10px;
+}
+
+.pitching-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+}
+
+.pitching-table:last-child {
     margin-bottom: 0;
 }
 
-.pitcher-table th,
-.pitcher-table td {
-    padding: 3px 6px;
+.pitching-table th,
+.pitching-table td {
+    padding: 2px 4px;
     text-align: right;
-    border-bottom: 1px dotted #ccc;
 }
 
-.pitcher-table th {
+.pitching-table th {
     font-weight: bold;
-    text-transform: uppercase;
-    font-size: 0.75rem;
     border-bottom: 1px solid #1a1a1a;
-    padding-bottom: 5px;
+    padding-bottom: 4px;
 }
 
-.pitcher-table .pitcher-name-col {
+.pitching-table .pitcher-col {
     text-align: left;
-    width: 40%;
+    width: 180px;
+}
+
+.pitching-table .spacer-small {
+    width: 15px;
 }
 
 /* ========================================
@@ -509,9 +497,20 @@ body {
    ======================================== */
 
 @media (max-width: 700px) {
-    .stats-columns {
-        flex-direction: column;
-        gap: 15px;
+    .batting-table {
+        font-size: 0.75rem;
+    }
+
+    .batting-table .name-col {
+        width: 90px;
+    }
+
+    .batting-table .spacer {
+        width: 10px;
+    }
+
+    .pitching-table .pitcher-col {
+        width: 140px;
     }
 }
 
@@ -562,23 +561,33 @@ body {
         padding: 10px;
     }
 
-    .linescore-row .team-name {
-        flex: 0 0 100px;
+    .game-title {
+        font-size: 1.1rem;
+    }
+
+    .batting-table,
+    .pitching-table {
+        font-size: 0.7rem;
+    }
+
+    .batting-table .name-col {
+        width: 70px;
+    }
+
+    .pitching-table .pitcher-col {
+        width: 100px;
+    }
+
+    .linescore-table {
         font-size: 0.8rem;
     }
 
-    .linescore-row .innings {
-        font-size: 0.75rem;
-        letter-spacing: 1px;
+    .linescore-table .ls-team {
+        width: 100px;
     }
 
-    .linescore-row .inning-score {
+    .linescore-table .ls-innings .inn {
         width: 12px;
-    }
-
-    .player-table,
-    .pitcher-table {
-        font-size: 0.7rem;
     }
 
     .section-header {
@@ -603,13 +612,13 @@ body {
         position: relative;
     }
 
-    .linescore-row .team-name {
-        flex: 0 0 80px;
-        font-size: 0.75rem;
+    .batting-table .spacer {
+        width: 5px;
     }
 
-    .linescore-row .inning-group {
-        margin-right: 4px;
+    .linescore-table .ls-team {
+        width: 80px;
+        font-size: 0.75rem;
     }
 }
 
