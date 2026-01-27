@@ -4,18 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Box Score</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Box Score</h1>
-            <p class="subtitle">~ Live MLB Game Results ~</p>
-            <div class="edition-info">
-                <span>National Edition</span>
-                <span id="current-date"></span>
-                <span>50 Cents</span>
+        <header class="masthead">
+            <div class="stripe-top"></div>
+            <div class="masthead-banner">
+                <div class="masthead-left">
+                    <span class="flag">&#127482;&#127480;</span>
+                </div>
+                <div class="masthead-center">
+                    <h1>Box Score</h1>
+                    <div class="masthead-date" id="current-date"></div>
+                </div>
+                <div class="masthead-right">
+                    <span class="edition-label">Sports Final</span>
+                    <span class="price">50&#162; NEWSSTAND</span>
+                </div>
             </div>
+            <div class="stripe-bottom"></div>
         </header>
 
         <div class="controls">

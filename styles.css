@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Times New Roman', Times, Georgia, serif;
-    background: #f4f1e8;
+    background: #d4d0c8;
     min-height: 100vh;
     color: #1a1a1a;
     line-height: 1.4;
@@ -15,82 +15,126 @@ body {
 .container {
     max-width: 900px;
     margin: 0 auto;
-    padding: 20px;
-    background: #fffef9;
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    background: #f5f3eb;
+    border-left: 1px solid #999;
+    border-right: 1px solid #999;
+    box-shadow: 0 0 30px rgba(0,0,0,0.2);
 }
 
-/* Newspaper Masthead */
-header {
-    text-align: center;
-    padding: 20px 0 15px;
-    border-bottom: 3px double #1a1a1a;
-    margin-bottom: 15px;
+/* ========================================
+   CHICAGO TRIBUNE STYLE MASTHEAD
+   ======================================== */
+
+.masthead {
+    background: #fff;
 }
 
-header h1 {
-    font-family: 'Times New Roman', Times, serif;
-    font-size: 3rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 4px;
-    margin-bottom: 5px;
-    line-height: 1;
+/* Red and white stripes */
+.stripe-top,
+.stripe-bottom {
+    height: 8px;
+    background: linear-gradient(to bottom,
+        #cc2027 0%, #cc2027 33%,
+        #fff 33%, #fff 66%,
+        #cc2027 66%, #cc2027 100%);
 }
 
-header .subtitle {
-    font-size: 0.9rem;
-    font-style: italic;
-    color: #444;
-    letter-spacing: 2px;
-}
-
-.edition-info {
+/* Blue banner */
+.masthead-banner {
+    background: #003d7a;
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    padding: 8px 0;
-    border-top: 1px solid #1a1a1a;
-    border-bottom: 1px solid #1a1a1a;
-    margin-top: 10px;
+    padding: 12px 20px;
+    min-height: 80px;
+}
+
+.masthead-left {
+    flex: 0 0 60px;
+}
+
+.masthead-left .flag {
+    font-size: 2rem;
+}
+
+.masthead-center {
+    flex: 1;
+    text-align: center;
+}
+
+.masthead-center h1 {
+    font-family: 'UnifrakturMaguntia', 'Times New Roman', serif;
+    font-size: 3.5rem;
+    font-weight: normal;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.masthead-date {
+    color: #fff;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+.masthead-right {
+    flex: 0 0 100px;
+    text-align: right;
+    color: #fff;
+    font-size: 0.75rem;
+    line-height: 1.4;
+}
+
+.masthead-right .edition-label {
+    display: block;
+    font-weight: bold;
     font-size: 0.85rem;
 }
 
-/* Controls styled like newspaper nav */
+.masthead-right .price {
+    display: block;
+    font-size: 0.7rem;
+    opacity: 0.9;
+}
+
+/* ========================================
+   CONTROLS
+   ======================================== */
+
 .controls {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 20px;
-    padding: 10px 0;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #1a1a1a;
+    padding: 12px 20px;
+    background: #fff;
+    border-bottom: 2px solid #1a1a1a;
 }
 
 #date-picker {
-    padding: 5px 10px;
+    padding: 6px 12px;
     font-family: 'Times New Roman', Times, serif;
     font-size: 1rem;
-    border: 1px solid #1a1a1a;
-    background: #fffef9;
+    border: 1px solid #333;
+    background: #fff;
     cursor: pointer;
 }
 
 #refresh-btn {
-    padding: 5px 15px;
+    padding: 6px 16px;
     font-family: 'Times New Roman', Times, serif;
     font-size: 0.9rem;
-    background: #1a1a1a;
-    color: #fffef9;
-    border: 1px solid #1a1a1a;
+    background: #003d7a;
+    color: #fff;
+    border: none;
     cursor: pointer;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
 #refresh-btn:hover {
-    background: #333;
+    background: #002d5a;
 }
 
 #last-updated {
@@ -99,11 +143,20 @@ header .subtitle {
     color: #666;
 }
 
+/* ========================================
+   CONTENT AREA
+   ======================================== */
+
+.content-area {
+    padding: 20px;
+}
+
 /* Loading */
 .loading {
     text-align: center;
-    padding: 40px;
+    padding: 40px 20px;
     font-style: italic;
+    background: #fff;
 }
 
 .spinner {
@@ -120,41 +173,51 @@ header .subtitle {
 
 .no-games {
     text-align: center;
-    padding: 40px;
+    padding: 40px 20px;
     font-style: italic;
+    background: #fff;
+    margin: 20px;
     border: 1px dashed #999;
-    margin: 20px 0;
 }
 
 /* Section Header */
 .section-header {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: bold;
     text-transform: uppercase;
     text-align: center;
-    padding: 10px 0;
-    border-top: 3px solid #1a1a1a;
-    border-bottom: 1px solid #1a1a1a;
-    margin-bottom: 20px;
+    padding: 10px 20px;
+    background: #1a1a1a;
+    color: #fff;
     letter-spacing: 3px;
+    margin: 0;
 }
 
-/* Games Container - Newspaper Column Layout */
+/* ========================================
+   GAMES CONTAINER
+   ======================================== */
+
 .games-container {
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 0;
+    padding: 15px;
+    background: #f5f3eb;
 }
 
 /* Individual Game Box Score */
 .game-card {
     border: 1px solid #1a1a1a;
-    background: #fffef9;
-    page-break-inside: avoid;
+    background: #fff;
+    margin-bottom: 15px;
+}
+
+.game-card:last-child {
+    margin-bottom: 0;
 }
 
 .game-card:hover {
-    background: #fdfcf5;
+    background: #fefefe;
 }
 
 /* Game Header */
@@ -163,25 +226,26 @@ header .subtitle {
     justify-content: space-between;
     align-items: center;
     padding: 8px 12px;
-    background: #1a1a1a;
-    color: #fffef9;
+    background: #003d7a;
+    color: #fff;
 }
 
 .game-header .matchup {
     font-weight: bold;
-    font-size: 1.1rem;
+    font-size: 1rem;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
 .game-header .status {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-style: italic;
 }
 
 .game-header .status.live {
     font-weight: bold;
     font-style: normal;
+    color: #ffcc00;
 }
 
 .game-header .status.live::before {
@@ -194,177 +258,252 @@ header .subtitle {
     51%, 100% { opacity: 0; }
 }
 
-/* Box Score Table */
+/* ========================================
+   BOX SCORE TABLE
+   ======================================== */
+
 .box-score {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
 }
 
 .box-score th,
 .box-score td {
-    padding: 6px 8px;
+    padding: 5px 6px;
     text-align: center;
-    border: 1px solid #ccc;
+    border: 1px solid #bbb;
 }
 
 .box-score th {
-    background: #e8e6dc;
+    background: #e0ddd4;
     font-weight: bold;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
+    color: #333;
 }
 
 .box-score .team-col {
     text-align: left;
     font-weight: bold;
-    width: 140px;
-    background: #f5f4ee;
+    width: 130px;
+    background: #f0ede4;
 }
 
 .box-score .team-col .abbrev {
-    font-size: 1rem;
+    font-size: 0.95rem;
 }
 
 .box-score .team-col .record {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: normal;
     color: #666;
 }
 
 .box-score .inning-col {
-    width: 28px;
+    width: 26px;
     font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85rem;
 }
 
 .box-score .total-col {
-    width: 35px;
+    width: 32px;
     font-weight: bold;
-    background: #f0efe5;
+    background: #e8e5dc;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 .box-score .rhe-col {
-    width: 30px;
+    width: 28px;
     font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85rem;
 }
 
 .box-score tr.winner .team-col {
-    background: #e8e6d0;
+    background: #e5e2d5;
 }
 
 .box-score tr.winner .total-col {
-    background: #dddcc5;
+    background: #d8d5c8;
 }
 
 /* Game Info Footer */
 .game-info {
-    padding: 10px 12px;
+    padding: 8px 12px;
     border-top: 1px solid #ccc;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: #444;
+    background: #fafaf7;
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 12px;
 }
 
 .game-info span {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
 }
 
 .game-info strong {
     font-weight: bold;
 }
 
-/* Scheduled Game (no box score yet) */
+/* ========================================
+   SCHEDULED GAME
+   ======================================== */
+
 .scheduled-game {
     padding: 20px;
     text-align: center;
+    background: #fff;
 }
 
 .scheduled-game .teams-preview {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: bold;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .scheduled-game .at-symbol {
-    margin: 0 10px;
+    margin: 0 8px;
     font-weight: normal;
+    color: #666;
 }
 
 .scheduled-game .game-time {
-    font-size: 1.1rem;
-    margin-bottom: 5px;
+    font-size: 1rem;
+    margin-bottom: 4px;
 }
 
 .scheduled-game .venue {
     font-style: italic;
     color: #666;
+    font-size: 0.9rem;
 }
 
-/* Footer */
+/* ========================================
+   FOOTER
+   ======================================== */
+
 .page-footer {
-    margin-top: 30px;
-    padding-top: 15px;
-    border-top: 3px double #1a1a1a;
+    padding: 15px 20px;
+    background: #1a1a1a;
     text-align: center;
-    font-size: 0.8rem;
-    font-style: italic;
-    color: #666;
+    font-size: 0.75rem;
+    color: #ccc;
 }
 
-/* Responsive */
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
 @media (max-width: 600px) {
-    header h1 {
-        font-size: 2rem;
-        letter-spacing: 2px;
+    .masthead-center h1 {
+        font-size: 2.2rem;
+    }
+
+    .masthead-banner {
+        padding: 10px 12px;
+        min-height: 60px;
+    }
+
+    .masthead-left {
+        flex: 0 0 40px;
+    }
+
+    .masthead-left .flag {
+        font-size: 1.5rem;
+    }
+
+    .masthead-right {
+        flex: 0 0 70px;
+    }
+
+    .masthead-right .edition-label {
+        font-size: 0.7rem;
+    }
+
+    .masthead-right .price {
+        font-size: 0.6rem;
+    }
+
+    .masthead-date {
+        font-size: 0.7rem;
+    }
+
+    .controls {
+        flex-wrap: wrap;
+        gap: 10px;
     }
 
     .container {
+        border: none;
+    }
+
+    .games-container {
         padding: 10px;
     }
 
     .box-score {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
     }
 
     .box-score th,
     .box-score td {
-        padding: 4px 3px;
+        padding: 3px 2px;
     }
 
     .box-score .team-col {
-        width: 80px;
+        width: 70px;
     }
 
     .box-score .inning-col {
-        width: 20px;
+        width: 18px;
+    }
+
+    .box-score .total-col {
+        width: 24px;
     }
 
     .game-info {
         flex-direction: column;
-        gap: 5px;
+        gap: 4px;
     }
 
-    .edition-info {
-        flex-direction: column;
-        text-align: center;
-        gap: 3px;
+    .section-header {
+        font-size: 1rem;
+        letter-spacing: 2px;
     }
 }
 
-/* Extra small screens - hide some innings */
+/* Extra small screens - hide extra innings */
 @media (max-width: 400px) {
     .box-score .inning-col.extra {
         display: none;
     }
+
+    .masthead-left {
+        display: none;
+    }
+
+    .masthead-right {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .masthead-banner {
+        position: relative;
+    }
 }
 
-/* Print styles for true newspaper feel */
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+
 @media print {
     body {
         background: white;
@@ -377,5 +516,16 @@ header .subtitle {
 
     .controls {
         display: none;
+    }
+
+    .stripe-top,
+    .stripe-bottom {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .masthead-banner {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
     }
 }
