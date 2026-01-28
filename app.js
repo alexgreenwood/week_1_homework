@@ -16,9 +16,6 @@ const TEAM_ABBREV = {
     'Athletics': 'OAK', 'Cleveland Indians': 'CLE'
 };
 
-// Cache for boxscore data
-const boxscoreCache = {};
-
 // DOM Elements
 const datePicker = document.getElementById('date-picker');
 const refreshBtn = document.getElementById('refresh-btn');
@@ -36,7 +33,7 @@ function init() {
     refreshBtn.addEventListener('click', fetchGames);
 
     fetchGames();
-    setInterval(fetchGames, 30000);
+    setInterval(fetchGames, 60000); // Refresh every 60 seconds
 }
 
 // Fetch games from MLB API
@@ -54,7 +51,7 @@ async function fetchGames() {
         const data = await response.json();
         const games = data.dates?.[0]?.games || [];
 
-        displayGames(games);
+        await displayGames(games);
         updateLastUpdated();
 
     } catch (error) {
@@ -71,54 +68,127 @@ async function fetchGames() {
 
 // Fetch detailed boxscore for a game
 async function fetchBoxscore(gamePk) {
-    if (boxscoreCache[gamePk]) {
-        return boxscoreCache[gamePk];
-    }
-
     try {
         const response = await fetch(
             `${MLB_API_BASE}.1/game/${gamePk}/boxscore`
         );
         if (!response.ok) throw new Error('Failed to fetch boxscore');
-
-        const data = await response.json();
-        boxscoreCache[gamePk] = data;
-        return data;
+        return await response.json();
     } catch (error) {
         console.error('Error fetching boxscore:', error);
         return null;
     }
 }
 
-// Toggle player stats visibility
-async function togglePlayerStats(gamePk, awayName, homeName, awayRuns, homeRuns, linescoreHTML) {
-    const statsContainer = document.getElementById(`stats-${gamePk}`);
-    const toggleBtn = document.getElementById(`toggle-${gamePk}`);
-
-    if (statsContainer.classList.contains('expanded')) {
-        statsContainer.classList.remove('expanded');
-        toggleBtn.textContent = 'Show Player Stats';
+// Display games in the UI
+async function displayGames(games) {
+    if (games.length === 0) {
+        noGames.style.display = 'block';
+        gamesContainer.innerHTML = '';
         return;
     }
 
-    toggleBtn.textContent = 'Loading...';
-    toggleBtn.disabled = true;
+    noGames.style.display = 'none';
 
-    const boxscore = await fetchBoxscore(gamePk);
+    // Process all games and fetch boxscores for completed/live games
+    const gameCards = await Promise.all(games.map(game => createGameCard(game)));
+    gamesContainer.innerHTML = gameCards.join('');
+}
 
-    if (boxscore) {
-        statsContainer.innerHTML = createPlayerStatsHTML(boxscore, awayName, homeName, awayRuns, homeRuns, linescoreHTML);
-        statsContainer.classList.add('expanded');
-        toggleBtn.textContent = 'Hide Player Stats';
-    } else {
-        toggleBtn.textContent = 'Error - Try Again';
+// Get team abbreviation
+function getAbbrev(teamName) {
+    return TEAM_ABBREV[teamName] || teamName.substring(0, 3).toUpperCase();
+}
+
+// Create HTML for a single game card with box score
+async function createGameCard(game) {
+    const status = getGameStatus(game);
+    const awayTeam = game.teams.away;
+    const homeTeam = game.teams.home;
+    const venue = game.venue?.name || 'TBD';
+
+    const linescore = game.linescore;
+    const innings = linescore?.innings || [];
+
+    const awayRuns = linescore?.teams?.away?.runs ?? 0;
+    const homeRuns = linescore?.teams?.home?.runs ?? 0;
+    const awayHits = linescore?.teams?.away?.hits ?? 0;
+    const homeHits = linescore?.teams?.home?.hits ?? 0;
+    const awayErrors = linescore?.teams?.away?.errors ?? 0;
+    const homeErrors = linescore?.teams?.home?.errors ?? 0;
+
+    const awayAbbrev = getAbbrev(awayTeam.team.name);
+    const homeAbbrev = getAbbrev(homeTeam.team.name);
+
+    const gamePk = game.gamePk;
+
+    // For scheduled games - simple preview
+    if (status.type === 'scheduled') {
+        const gameTime = formatGameTime(game.gameDate);
+        return `
+            <div class="game-card">
+                <div class="game-header">
+                    <span class="matchup">${awayAbbrev} at ${homeAbbrev}</span>
+                    <span class="status">${status.text}</span>
+                </div>
+                <div class="scheduled-game">
+                    <div class="teams-preview">
+                        ${awayTeam.team.name}
+                        <span class="at-symbol">@</span>
+                        ${homeTeam.team.name}
+                    </div>
+                    <div class="game-time">${gameTime}</div>
+                    <div class="venue">${venue}</div>
+                </div>
+            </div>
+        `;
     }
 
-    toggleBtn.disabled = false;
+    // Build linescore
+    const numInnings = Math.max(9, innings.length);
+    let awayInningScores = '';
+    let homeInningScores = '';
+
+    for (let i = 1; i <= numInnings; i++) {
+        const inning = innings[i - 1];
+        const awayScore = inning?.away?.runs ?? '';
+        const homeScore = inning?.home?.runs ?? '';
+
+        if (i === 4 || i === 7 || i === 10) {
+            awayInningScores += '&nbsp;&nbsp;';
+            homeInningScores += '&nbsp;&nbsp;';
+        }
+        awayInningScores += `<span class="inn">${awayScore}</span>`;
+        homeInningScores += `<span class="inn">${homeScore}</span>`;
+    }
+
+    // Status text
+    let statusText = status.text;
+    if (status.type === 'live' && linescore?.currentInning) {
+        statusText = `${linescore.inningState} ${linescore.currentInning}`;
+    }
+
+    // Fetch boxscore for player stats
+    const boxscore = await fetchBoxscore(gamePk);
+    let playerStatsHTML = '';
+
+    if (boxscore) {
+        playerStatsHTML = createPlayerStatsHTML(boxscore, awayTeam.team.name, homeTeam.team.name, awayInningScores, homeInningScores, awayRuns, homeRuns, awayHits, homeHits, awayErrors, homeErrors);
+    }
+
+    return `
+        <div class="game-card">
+            <div class="game-title-bar">
+                <span class="game-title">${awayAbbrev} ${awayRuns}, ${homeAbbrev} ${homeRuns}</span>
+                <span class="status ${status.type}">${statusText}</span>
+            </div>
+            ${playerStatsHTML}
+        </div>
+    `;
 }
 
 // Create player stats HTML matching newspaper style
-function createPlayerStatsHTML(boxscore, awayName, homeName, awayRuns, homeRuns, linescoreHTML) {
+function createPlayerStatsHTML(boxscore, awayName, homeName, awayInningScores, homeInningScores, awayRuns, homeRuns, awayHits, homeHits, awayErrors, homeErrors) {
     const awayBatters = boxscore.teams.away.batters || [];
     const homeBatters = boxscore.teams.home.batters || [];
     const awayPitchers = boxscore.teams.away.pitchers || [];
@@ -250,7 +320,24 @@ function createPlayerStatsHTML(boxscore, awayName, homeName, awayRuns, homeRuns,
 
             <!-- Linescore -->
             <div class="linescore-section">
-                ${linescoreHTML}
+                <table class="linescore-table">
+                    <tbody>
+                        <tr>
+                            <td class="ls-team">${awayName}</td>
+                            <td class="ls-innings">${awayInningScores}</td>
+                            <td class="ls-dash">&mdash;${awayRuns}</td>
+                            <td class="ls-rhe">${awayHits}</td>
+                            <td class="ls-rhe">${awayErrors}</td>
+                        </tr>
+                        <tr>
+                            <td class="ls-team">${homeName}</td>
+                            <td class="ls-innings">${homeInningScores}</td>
+                            <td class="ls-dash">&mdash;${homeRuns}</td>
+                            <td class="ls-rhe">${homeHits}</td>
+                            <td class="ls-rhe">${homeErrors}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
             <!-- Pitching Stats -->
@@ -336,7 +423,6 @@ function createBattingRows(awayStats, homeStats) {
 
         html += '<tr>';
 
-        // Away team
         if (away) {
             html += `
                 <td class="name-col">${away.name} ${away.position}</td>
@@ -352,7 +438,6 @@ function createBattingRows(awayStats, homeStats) {
 
         html += '<td class="spacer"></td>';
 
-        // Home team
         if (home) {
             html += `
                 <td class="name-col">${home.name} ${home.position}</td>
@@ -399,140 +484,6 @@ function calculateBattingTotals(batters) {
     }), { ab: 0, r: 0, h: 0, rbi: 0 });
 }
 
-// Display games in the UI
-function displayGames(games) {
-    if (games.length === 0) {
-        noGames.style.display = 'block';
-        gamesContainer.innerHTML = '';
-        return;
-    }
-
-    noGames.style.display = 'none';
-    gamesContainer.innerHTML = games.map(game => createGameCard(game)).join('');
-}
-
-// Get team abbreviation
-function getAbbrev(teamName) {
-    return TEAM_ABBREV[teamName] || teamName.substring(0, 3).toUpperCase();
-}
-
-// Create HTML for a single game card with box score
-function createGameCard(game) {
-    const status = getGameStatus(game);
-    const awayTeam = game.teams.away;
-    const homeTeam = game.teams.home;
-    const venue = game.venue?.name || 'TBD';
-
-    const linescore = game.linescore;
-    const innings = linescore?.innings || [];
-
-    const awayRuns = linescore?.teams?.away?.runs ?? 0;
-    const homeRuns = linescore?.teams?.home?.runs ?? 0;
-    const awayHits = linescore?.teams?.away?.hits ?? 0;
-    const homeHits = linescore?.teams?.home?.hits ?? 0;
-    const awayErrors = linescore?.teams?.away?.errors ?? 0;
-    const homeErrors = linescore?.teams?.home?.errors ?? 0;
-
-    const awayAbbrev = getAbbrev(awayTeam.team.name);
-    const homeAbbrev = getAbbrev(homeTeam.team.name);
-
-    const gamePk = game.gamePk;
-
-    // For scheduled games
-    if (status.type === 'scheduled') {
-        const gameTime = formatGameTime(game.gameDate);
-        return `
-            <div class="game-card">
-                <div class="game-header">
-                    <span class="matchup">${awayAbbrev} at ${homeAbbrev}</span>
-                    <span class="status">${status.text}</span>
-                </div>
-                <div class="scheduled-game">
-                    <div class="teams-preview">
-                        ${awayTeam.team.name}
-                        <span class="at-symbol">@</span>
-                        ${homeTeam.team.name}
-                    </div>
-                    <div class="game-time">${gameTime}</div>
-                    <div class="venue">${venue}</div>
-                </div>
-            </div>
-        `;
-    }
-
-    // Build inning-by-inning display for linescore
-    const numInnings = Math.max(9, innings.length);
-
-    // Create inning scores grouped
-    let awayInningScores = '';
-    let homeInningScores = '';
-
-    for (let i = 1; i <= numInnings; i++) {
-        const inning = innings[i - 1];
-        const awayScore = inning?.away?.runs ?? '';
-        const homeScore = inning?.home?.runs ?? '';
-
-        if (i === 4 || i === 7 || i === 10) {
-            awayInningScores += '&nbsp;&nbsp;';
-            homeInningScores += '&nbsp;&nbsp;';
-        }
-        awayInningScores += `<span class="inn">${awayScore}</span>`;
-        homeInningScores += `<span class="inn">${homeScore}</span>`;
-    }
-
-    // Status text
-    let statusText = status.text;
-    if (status.type === 'live' && linescore?.currentInning) {
-        statusText = `${linescore.inningState} ${linescore.currentInning}`;
-    }
-
-    const showExpandBtn = status.type === 'final' || status.type === 'live';
-
-    // Linescore HTML for embedding in expanded view
-    const linescoreHTML = `
-        <table class="linescore-table">
-            <tbody>
-                <tr>
-                    <td class="ls-team">${awayTeam.team.name}</td>
-                    <td class="ls-innings">${awayInningScores}</td>
-                    <td class="ls-dash">&mdash;${awayRuns}</td>
-                    <td class="ls-rhe">${awayHits}</td>
-                    <td class="ls-rhe">${awayErrors}</td>
-                </tr>
-                <tr>
-                    <td class="ls-team">${homeTeam.team.name}</td>
-                    <td class="ls-innings">${homeInningScores}</td>
-                    <td class="ls-dash">&mdash;${homeRuns}</td>
-                    <td class="ls-rhe">${homeHits}</td>
-                    <td class="ls-rhe">${homeErrors}</td>
-                </tr>
-            </tbody>
-        </table>
-    `;
-
-    // Escape the linescore HTML for passing to function
-    const escapedLinescore = linescoreHTML.replace(/'/g, "\\'").replace(/\n/g, '').replace(/\s+/g, ' ');
-
-    return `
-        <div class="game-card">
-            <div class="game-title-bar">
-                <span class="game-title">${awayAbbrev} ${awayRuns}, ${homeAbbrev} ${homeRuns}</span>
-                <span class="status ${status.type}">${statusText}</span>
-            </div>
-
-            ${showExpandBtn ? `
-                <div class="expand-section">
-                    <button class="expand-btn" id="toggle-${gamePk}"
-                            onclick="togglePlayerStats(${gamePk}, '${awayTeam.team.name}', '${homeTeam.team.name}', ${awayRuns}, ${homeRuns}, '${escapedLinescore}')">
-                        Show Player Stats
-                    </button>
-                </div>
-                <div class="player-stats-container" id="stats-${gamePk}"></div>
-            ` : ''}
-        </div>
-    `;
-}
-
 // Get game status
 function getGameStatus(game) {
     const state = game.status?.abstractGameState;
@@ -573,9 +524,6 @@ function updateLastUpdated() {
     const now = new Date();
     lastUpdated.textContent = `Edition: ${now.toLocaleTimeString()}`;
 }
-
-// Make togglePlayerStats available globally
-window.togglePlayerStats = togglePlayerStats;
 
 // Start the app
 init();
