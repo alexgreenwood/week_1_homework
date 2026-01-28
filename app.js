@@ -172,34 +172,41 @@ async function createGameCard(game) {
     const boxscore = await fetchBoxscore(gamePk);
     let playerStatsHTML = '';
 
-    if (boxscore && boxscore.teams) {
-        playerStatsHTML = createPlayerStatsHTML(boxscore, awayTeam.team.name, homeTeam.team.name, awayInningScores, homeInningScores, awayRuns, homeRuns, awayHits, homeHits, awayErrors, homeErrors);
-    } else {
-        // Fallback: show just the linescore if boxscore isn't available
-        playerStatsHTML = `
-            <div class="newspaper-boxscore">
-                <div class="linescore-section">
-                    <table class="linescore-table">
-                        <tbody>
-                            <tr>
-                                <td class="ls-team">${awayTeam.team.name}</td>
-                                <td class="ls-innings">${awayInningScores}</td>
-                                <td class="ls-dash">&mdash;${awayRuns}</td>
-                                <td class="ls-rhe">${awayHits}</td>
-                                <td class="ls-rhe">${awayErrors}</td>
-                            </tr>
-                            <tr>
-                                <td class="ls-team">${homeTeam.team.name}</td>
-                                <td class="ls-innings">${homeInningScores}</td>
-                                <td class="ls-dash">&mdash;${homeRuns}</td>
-                                <td class="ls-rhe">${homeHits}</td>
-                                <td class="ls-rhe">${homeErrors}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+    // Create fallback linescore HTML
+    const fallbackLinescoreHTML = `
+        <div class="newspaper-boxscore">
+            <div class="linescore-section">
+                <table class="linescore-table">
+                    <tbody>
+                        <tr>
+                            <td class="ls-team">${awayTeam.team.name}</td>
+                            <td class="ls-innings">${awayInningScores}</td>
+                            <td class="ls-dash">&mdash;${awayRuns}</td>
+                            <td class="ls-rhe">${awayHits}</td>
+                            <td class="ls-rhe">${awayErrors}</td>
+                        </tr>
+                        <tr>
+                            <td class="ls-team">${homeTeam.team.name}</td>
+                            <td class="ls-innings">${homeInningScores}</td>
+                            <td class="ls-dash">&mdash;${homeRuns}</td>
+                            <td class="ls-rhe">${homeHits}</td>
+                            <td class="ls-rhe">${homeErrors}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-        `;
+        </div>
+    `;
+
+    try {
+        if (boxscore && boxscore.teams && boxscore.teams.away && boxscore.teams.home) {
+            playerStatsHTML = createPlayerStatsHTML(boxscore, awayTeam.team.name, homeTeam.team.name, awayInningScores, homeInningScores, awayRuns, homeRuns, awayHits, homeHits, awayErrors, homeErrors);
+        } else {
+            playerStatsHTML = fallbackLinescoreHTML;
+        }
+    } catch (error) {
+        console.error('Error creating player stats:', error);
+        playerStatsHTML = fallbackLinescoreHTML;
     }
 
     return `
@@ -219,8 +226,8 @@ function createPlayerStatsHTML(boxscore, awayName, homeName, awayInningScores, h
     const homeBatters = boxscore.teams.home.batters || [];
     const awayPitchers = boxscore.teams.away.pitchers || [];
     const homePitchers = boxscore.teams.home.pitchers || [];
-    const players = boxscore.teams.away.players;
-    const homePlayers = boxscore.teams.home.players;
+    const players = boxscore.teams.away.players || {};
+    const homePlayers = boxscore.teams.home.players || {};
 
     const awayAbbrev = getAbbrev(awayName);
     const homeAbbrev = getAbbrev(homeName);
@@ -228,11 +235,11 @@ function createPlayerStatsHTML(boxscore, awayName, homeName, awayInningScores, h
     // Get batting stats
     const awayBattingStats = awayBatters.map(id => {
         const player = players[`ID${id}`];
-        if (!player || !player.stats.batting) return null;
+        if (!player || !player.stats?.batting) return null;
         const stats = player.stats.batting;
         return {
-            name: formatPlayerName(player.person.fullName),
-            position: player.position.abbreviation.toLowerCase(),
+            name: formatPlayerName(player.person?.fullName || 'Unknown'),
+            position: player.position?.abbreviation?.toLowerCase() || '',
             ab: stats.atBats ?? 0,
             r: stats.runs ?? 0,
             h: stats.hits ?? 0,
@@ -243,11 +250,11 @@ function createPlayerStatsHTML(boxscore, awayName, homeName, awayInningScores, h
 
     const homeBattingStats = homeBatters.map(id => {
         const player = homePlayers[`ID${id}`];
-        if (!player || !player.stats.batting) return null;
+        if (!player || !player.stats?.batting) return null;
         const stats = player.stats.batting;
         return {
-            name: formatPlayerName(player.person.fullName),
-            position: player.position.abbreviation.toLowerCase(),
+            name: formatPlayerName(player.person?.fullName || 'Unknown'),
+            position: player.position?.abbreviation?.toLowerCase() || '',
             ab: stats.atBats ?? 0,
             r: stats.runs ?? 0,
             h: stats.hits ?? 0,
@@ -259,11 +266,11 @@ function createPlayerStatsHTML(boxscore, awayName, homeName, awayInningScores, h
     // Get pitching stats
     const awayPitchingStats = awayPitchers.map(id => {
         const player = players[`ID${id}`];
-        if (!player || !player.stats.pitching) return null;
+        if (!player || !player.stats?.pitching) return null;
         const stats = player.stats.pitching;
         const seasonStats = player.seasonStats?.pitching || {};
         return {
-            name: formatPlayerName(player.person.fullName),
+            name: formatPlayerName(player.person?.fullName || 'Unknown'),
             decision: getPitchingDecision(stats),
             record: `${seasonStats.wins || 0}-${seasonStats.losses || 0}`,
             ip: stats.inningsPitched || '0',
@@ -279,11 +286,11 @@ function createPlayerStatsHTML(boxscore, awayName, homeName, awayInningScores, h
 
     const homePitchingStats = homePitchers.map(id => {
         const player = homePlayers[`ID${id}`];
-        if (!player || !player.stats.pitching) return null;
+        if (!player || !player.stats?.pitching) return null;
         const stats = player.stats.pitching;
         const seasonStats = player.seasonStats?.pitching || {};
         return {
-            name: formatPlayerName(player.person.fullName),
+            name: formatPlayerName(player.person?.fullName || 'Unknown'),
             decision: getPitchingDecision(stats),
             record: `${seasonStats.wins || 0}-${seasonStats.losses || 0}`,
             ip: stats.inningsPitched || '0',
