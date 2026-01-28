@@ -136,12 +136,14 @@ body {
 .date-picker-box {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     padding: 5px 12px;
     border: 1px solid #999;
     border-radius: 8px;
     background: #f5f3eb;
     height: 30px;
+    min-width: 175px;
 }
 
 .date-picker-box label {
@@ -178,8 +180,10 @@ body {
     background: #f5f3eb;
     cursor: pointer;
     height: 30px;
+    min-width: 175px;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .refresh-btn-box:hover {
