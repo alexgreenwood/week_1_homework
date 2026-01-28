@@ -6,39 +6,42 @@
     <title>Box Score</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <header class="masthead">
-            <div class="stripe-top"></div>
             <div class="masthead-banner">
                 <div class="masthead-left">
-                    <span class="flag">&#127482;&#127480;</span>
+                    <img src="https://www.mlbstatic.com/team-logos/league-on-dark/1.svg" alt="MLB" class="mlb-logo">
                 </div>
                 <div class="masthead-center">
                     <h1>Box Score</h1>
                     <div class="masthead-date" id="current-date"></div>
                 </div>
                 <div class="masthead-right">
-                    <span class="edition-label">Sports Final</span>
-                    <span class="price">50&#162; NEWSSTAND</span>
+                    <span class="edition-label">Live Edition</span>
+                    <span class="edition-time" id="edition-time"></span>
                 </div>
             </div>
-            <div class="stripe-bottom"></div>
         </header>
 
         <div class="controls">
-            <input type="date" id="date-picker" />
-            <button id="refresh-btn">Update Scores</button>
-            <span id="last-updated"></span>
+            <div class="controls-left">
+                <span class="source-note">Scores provided by Major League Baseball. All times local.</span>
+            </div>
+            <div class="controls-center">
+                <label for="date-picker">Game Day:</label>
+                <input type="date" id="date-picker" />
+            </div>
+            <div class="controls-right">
+                <a href="#" id="refresh-btn">Refresh Scores</a>
+            </div>
         </div>
 
-        <div class="section-header">Box Scores</div>
-
         <div id="loading" class="loading">
-            <p>Fetching latest scores from the wire...</p>
+            <p>Loading scores...</p>
         </div>
 
         <div id="no-games" class="no-games" style="display: none;">
@@ -46,10 +49,6 @@
         </div>
 
         <div id="games-container" class="games-container"></div>
-
-        <footer class="page-footer">
-            <p>Scores provided by Major League Baseball. All times local.</p>
-        </footer>
     </div>
 
     <script>
@@ -57,10 +56,21 @@
         document.getElementById('current-date').textContent =
             new Date().toLocaleDateString('en-US', {
                 weekday: 'long',
-                year: 'numeric',
                 month: 'long',
-                day: 'numeric'
+                day: 'numeric',
+                year: 'numeric'
             });
+
+        // Set edition time
+        function updateEditionTime() {
+            document.getElementById('edition-time').textContent =
+                new Date().toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                });
+        }
+        updateEditionTime();
     </script>
     <script src="app.js"></script>
 </body>

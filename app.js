@@ -16,10 +16,17 @@ const TEAM_ABBREV = {
     'Athletics': 'OAK', 'Cleveland Indians': 'CLE'
 };
 
+// National League teams
+const NL_TEAMS = [
+    'Arizona Diamondbacks', 'Atlanta Braves', 'Chicago Cubs', 'Cincinnati Reds',
+    'Colorado Rockies', 'Los Angeles Dodgers', 'Miami Marlins', 'Milwaukee Brewers',
+    'New York Mets', 'Philadelphia Phillies', 'Pittsburgh Pirates', 'San Diego Padres',
+    'San Francisco Giants', 'St. Louis Cardinals', 'Washington Nationals'
+];
+
 // DOM Elements
 const datePicker = document.getElementById('date-picker');
 const refreshBtn = document.getElementById('refresh-btn');
-const lastUpdated = document.getElementById('last-updated');
 const loading = document.getElementById('loading');
 const noGames = document.getElementById('no-games');
 const gamesContainer = document.getElementById('games-container');
@@ -30,7 +37,10 @@ function init() {
     datePicker.value = today;
 
     datePicker.addEventListener('change', fetchGames);
-    refreshBtn.addEventListener('click', fetchGames);
+    refreshBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        fetchGames();
+    });
 
     fetchGames();
     setInterval(fetchGames, 60000); // Refresh every 60 seconds
@@ -52,7 +62,6 @@ async function fetchGames() {
         const games = data.dates?.[0]?.games || [];
 
         await displayGames(games);
-        updateLastUpdated();
 
     } catch (error) {
         console.error('Error fetching games:', error);
@@ -80,7 +89,15 @@ async function fetchBoxscore(gamePk) {
     }
 }
 
-// Display games in the UI
+// Determine if a game is National League
+function isNationalLeague(game) {
+    const homeTeam = game.teams.home.team.name;
+    const awayTeam = game.teams.away.team.name;
+    // A game is NL if both teams are NL teams
+    return NL_TEAMS.includes(homeTeam) && NL_TEAMS.includes(awayTeam);
+}
+
+// Display games in the UI, grouped by league
 async function displayGames(games) {
     if (games.length === 0) {
         noGames.style.display = 'block';
@@ -90,9 +107,27 @@ async function displayGames(games) {
 
     noGames.style.display = 'none';
 
-    // Process all games and fetch boxscores for completed/live games
-    const gameCards = await Promise.all(games.map(game => createGameCard(game)));
-    gamesContainer.innerHTML = gameCards.join('');
+    // Separate games by league
+    const nlGames = games.filter(game => isNationalLeague(game));
+    const alGames = games.filter(game => !isNationalLeague(game));
+
+    let html = '';
+
+    // National League games first
+    if (nlGames.length > 0) {
+        html += '<div class="league-header">National League</div>';
+        const nlCards = await Promise.all(nlGames.map(game => createGameCard(game)));
+        html += nlCards.join('');
+    }
+
+    // American League / Interleague games
+    if (alGames.length > 0) {
+        html += '<div class="league-header">American League</div>';
+        const alCards = await Promise.all(alGames.map(game => createGameCard(game)));
+        html += alCards.join('');
+    }
+
+    gamesContainer.innerHTML = html;
 }
 
 // Get team abbreviation
@@ -144,7 +179,7 @@ async function createGameCard(game) {
         `;
     }
 
-    // Build linescore
+    // Build linescore with grouped innings
     const numInnings = Math.max(9, innings.length);
     let awayInningScores = '';
     let homeInningScores = '';
@@ -154,7 +189,8 @@ async function createGameCard(game) {
         const awayScore = inning?.away?.runs ?? '';
         const homeScore = inning?.home?.runs ?? '';
 
-        if (i === 4 || i === 7 || i === 10) {
+        // Add space after innings 3, 6, 9 for grouping
+        if (i === 4 || i === 7 || (i > 9 && (i - 1) % 3 === 0)) {
             awayInningScores += '&nbsp;&nbsp;';
             homeInningScores += '&nbsp;&nbsp;';
         }
@@ -181,14 +217,14 @@ async function createGameCard(game) {
                         <tr>
                             <td class="ls-team">${awayTeam.team.name}</td>
                             <td class="ls-innings">${awayInningScores}</td>
-                            <td class="ls-dash">&mdash;${awayRuns}</td>
+                            <td class="ls-total">&mdash;${awayRuns}</td>
                             <td class="ls-rhe">${awayHits}</td>
                             <td class="ls-rhe">${awayErrors}</td>
                         </tr>
                         <tr>
                             <td class="ls-team">${homeTeam.team.name}</td>
                             <td class="ls-innings">${homeInningScores}</td>
-                            <td class="ls-dash">&mdash;${homeRuns}</td>
+                            <td class="ls-total">&mdash;${homeRuns}</td>
                             <td class="ls-rhe">${homeHits}</td>
                             <td class="ls-rhe">${homeErrors}</td>
                         </tr>
@@ -220,7 +256,7 @@ async function createGameCard(game) {
     `;
 }
 
-// Create player stats HTML matching newspaper style
+// Create player stats HTML - NEW ORDER: Linescore, Batting, Pitching
 function createPlayerStatsHTML(boxscore, awayName, homeName, awayInningScores, homeInningScores, awayRuns, homeRuns, awayHits, homeHits, awayErrors, homeErrors) {
     const awayBatters = boxscore.teams.away.batters || [];
     const homeBatters = boxscore.teams.home.batters || [];
@@ -308,8 +344,31 @@ function createPlayerStatsHTML(boxscore, awayName, homeName, awayInningScores, h
     const awayBatTotals = calculateBattingTotals(awayBattingStats);
     const homeBatTotals = calculateBattingTotals(homeBattingStats);
 
+    // NEW ORDER: Linescore first, then Batting, then Pitching
     return `
         <div class="newspaper-boxscore">
+            <!-- Linescore at Top -->
+            <div class="linescore-section">
+                <table class="linescore-table">
+                    <tbody>
+                        <tr>
+                            <td class="ls-team">${awayName}</td>
+                            <td class="ls-innings">${awayInningScores}</td>
+                            <td class="ls-total">&mdash;${awayRuns}</td>
+                            <td class="ls-rhe">${awayHits}</td>
+                            <td class="ls-rhe">${awayErrors}</td>
+                        </tr>
+                        <tr>
+                            <td class="ls-team">${homeName}</td>
+                            <td class="ls-innings">${homeInningScores}</td>
+                            <td class="ls-total">&mdash;${homeRuns}</td>
+                            <td class="ls-rhe">${homeHits}</td>
+                            <td class="ls-rhe">${homeErrors}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
             <!-- Batting Stats Side by Side -->
             <div class="batting-section">
                 <table class="batting-table">
@@ -346,28 +405,6 @@ function createPlayerStatsHTML(boxscore, awayName, homeName, awayInningScores, h
                             <td><b>${homeBatTotals.h}</b></td>
                             <td><b>${homeBatTotals.rbi}</b></td>
                             <td></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Linescore -->
-            <div class="linescore-section">
-                <table class="linescore-table">
-                    <tbody>
-                        <tr>
-                            <td class="ls-team">${awayName}</td>
-                            <td class="ls-innings">${awayInningScores}</td>
-                            <td class="ls-dash">&mdash;${awayRuns}</td>
-                            <td class="ls-rhe">${awayHits}</td>
-                            <td class="ls-rhe">${awayErrors}</td>
-                        </tr>
-                        <tr>
-                            <td class="ls-team">${homeName}</td>
-                            <td class="ls-innings">${homeInningScores}</td>
-                            <td class="ls-dash">&mdash;${homeRuns}</td>
-                            <td class="ls-rhe">${homeHits}</td>
-                            <td class="ls-rhe">${homeErrors}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -526,10 +563,10 @@ function getGameStatus(game) {
         case 'Live':
             return { type: 'live', text: 'IN PROGRESS' };
         case 'Final':
-            return { type: 'final', text: detailedState || 'FINAL' };
+            return { type: 'final', text: detailedState || 'Final' };
         case 'Preview':
         default:
-            return { type: 'scheduled', text: detailedState || 'SCHEDULED' };
+            return { type: 'scheduled', text: detailedState || 'Scheduled' };
     }
 }
 
@@ -550,12 +587,6 @@ function showLoading(show) {
         gamesContainer.innerHTML = '';
         noGames.style.display = 'none';
     }
-}
-
-// Update last updated timestamp
-function updateLastUpdated() {
-    const now = new Date();
-    lastUpdated.textContent = `Edition: ${now.toLocaleTimeString()}`;
 }
 
 // Start the app
