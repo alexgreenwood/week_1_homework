@@ -24,12 +24,20 @@ body {
    ======================================== */
 
 .masthead {
-    background: #fff;
+    background: #f5f3eb;
 }
 
 .header-stripe-red {
     height: 6px;
-    background: #c41e3a;
+    background: #EE3943;
+}
+
+.header-stripe-red.top {
+    margin-bottom: 4px;
+}
+
+.header-stripe-red.bottom {
+    margin-top: 4px;
 }
 
 .masthead-banner {
@@ -38,7 +46,7 @@ body {
     justify-content: space-between;
     padding: 12px 20px;
     min-height: 70px;
-    background: #002d72;
+    background: rgba(1, 123, 232, 0.85);
 }
 
 .masthead-left {
@@ -56,9 +64,9 @@ body {
 }
 
 .masthead-center h1 {
-    font-family: 'Lucida Blackletter', 'Old English Text MT', 'BlackChancery', serif;
+    font-family: 'UnifrakturMaguntia', 'Old English Text MT', serif;
     font-size: 3rem;
-    font-weight: bold;
+    font-weight: normal;
     color: #fff;
     line-height: 1;
     margin-bottom: 2px;
@@ -98,16 +106,18 @@ body {
 
 .controls {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
-    padding: 10px 15px;
+    padding: 10px 15px 8px 15px;
     background: #f5f3eb;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 3px solid #1a1a1a;
     font-size: 0.75rem;
 }
 
 .controls-left {
     flex: 1;
+    display: flex;
+    align-items: flex-end;
 }
 
 .source-note {
@@ -115,6 +125,7 @@ body {
     font-weight: bold;
     color: #1a1a1a;
     font-size: 0.7rem;
+    padding-bottom: 2px;
 }
 
 .controls-center {
@@ -128,8 +139,8 @@ body {
     gap: 8px;
     padding: 6px 15px;
     border: 1px solid #999;
-    border-radius: 15px;
-    background: #fff;
+    border-radius: 8px;
+    background: #f5f3eb;
 }
 
 .date-picker-box label {
@@ -150,21 +161,25 @@ body {
 
 .controls-right {
     flex: 1;
-    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 }
 
-#refresh-btn {
+.refresh-btn-box {
     font-family: Arial, Helvetica, sans-serif;
-    color: #0066cc;
-    text-decoration: underline;
-    font-size: 0.75rem;
+    color: #1a1a1a;
+    text-decoration: none;
+    font-size: 0.8rem;
+    padding: 6px 15px;
+    border: 1px solid #999;
+    border-radius: 8px;
+    background: #f5f3eb;
     cursor: pointer;
-    background: none;
-    border: none;
 }
 
-#refresh-btn:hover {
-    color: #004499;
+.refresh-btn-box:hover {
+    background: #e8e5dd;
 }
 
 /* ========================================
@@ -485,6 +500,7 @@ body {
         order: 3;
         flex: 1 1 100%;
         text-align: center;
+        justify-content: center;
     }
 
     .controls-center {

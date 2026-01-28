@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Box Score</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <header class="masthead">
-            <div class="header-stripe-red"></div>
+            <div class="header-stripe-red top"></div>
             <div class="masthead-banner">
                 <div class="masthead-left">
                     <img src="https://www.mlbstatic.com/team-logos/league-on-dark/1.svg" alt="MLB" class="mlb-logo">
@@ -23,7 +26,7 @@
                     <span class="edition-time" id="edition-time"></span>
                 </div>
             </div>
-            <div class="header-stripe-red"></div>
+            <div class="header-stripe-red bottom"></div>
         </header>
 
         <div class="controls">
@@ -37,7 +40,7 @@
                 </div>
             </div>
             <div class="controls-right">
-                <a href="#" id="refresh-btn">Refresh Scores</a>
+                <a href="#" id="refresh-btn" class="refresh-btn-box">Refresh Scores</a>
             </div>
         </div>
 
