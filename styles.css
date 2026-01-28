@@ -33,6 +33,8 @@ body {
 }
 
 .header-stripe-red.top {
+    height: 12px;
+    margin-top: 12px;
     margin-bottom: 4px;
 }
 
