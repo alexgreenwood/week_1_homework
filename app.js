@@ -172,8 +172,34 @@ async function createGameCard(game) {
     const boxscore = await fetchBoxscore(gamePk);
     let playerStatsHTML = '';
 
-    if (boxscore) {
+    if (boxscore && boxscore.teams) {
         playerStatsHTML = createPlayerStatsHTML(boxscore, awayTeam.team.name, homeTeam.team.name, awayInningScores, homeInningScores, awayRuns, homeRuns, awayHits, homeHits, awayErrors, homeErrors);
+    } else {
+        // Fallback: show just the linescore if boxscore isn't available
+        playerStatsHTML = `
+            <div class="newspaper-boxscore">
+                <div class="linescore-section">
+                    <table class="linescore-table">
+                        <tbody>
+                            <tr>
+                                <td class="ls-team">${awayTeam.team.name}</td>
+                                <td class="ls-innings">${awayInningScores}</td>
+                                <td class="ls-dash">&mdash;${awayRuns}</td>
+                                <td class="ls-rhe">${awayHits}</td>
+                                <td class="ls-rhe">${awayErrors}</td>
+                            </tr>
+                            <tr>
+                                <td class="ls-team">${homeTeam.team.name}</td>
+                                <td class="ls-innings">${homeInningScores}</td>
+                                <td class="ls-dash">&mdash;${homeRuns}</td>
+                                <td class="ls-rhe">${homeHits}</td>
+                                <td class="ls-rhe">${homeErrors}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
     }
 
     return `
