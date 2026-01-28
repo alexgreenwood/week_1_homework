@@ -70,7 +70,7 @@ async function fetchGames() {
 async function fetchBoxscore(gamePk) {
     try {
         const response = await fetch(
-            `${MLB_API_BASE}.1/game/${gamePk}/boxscore`
+            `https://statsapi.mlb.com/api/v1/game/${gamePk}/boxscore`
         );
         if (!response.ok) throw new Error('Failed to fetch boxscore');
         return await response.json();
