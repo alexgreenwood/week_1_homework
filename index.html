@@ -4,14 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Box Score</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <header class="masthead">
+            <div class="header-stripe-red"></div>
             <div class="masthead-banner">
                 <div class="masthead-left">
                     <img src="https://www.mlbstatic.com/team-logos/league-on-dark/1.svg" alt="MLB" class="mlb-logo">
@@ -25,6 +23,7 @@
                     <span class="edition-time" id="edition-time"></span>
                 </div>
             </div>
+            <div class="header-stripe-red"></div>
         </header>
 
         <div class="controls">
@@ -32,8 +31,10 @@
                 <span class="source-note">Scores provided by Major League Baseball. All times local.</span>
             </div>
             <div class="controls-center">
-                <label for="date-picker">Game Day:</label>
-                <input type="date" id="date-picker" />
+                <div class="date-picker-box">
+                    <label for="date-picker">Game Day:</label>
+                    <input type="date" id="date-picker" />
+                </div>
             </div>
             <div class="controls-right">
                 <a href="#" id="refresh-btn">Refresh Scores</a>

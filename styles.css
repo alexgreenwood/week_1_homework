@@ -5,8 +5,8 @@
 }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #e8e8e8;
+    font-family: 'Times New Roman', Times, serif;
+    background: #f5f3eb;
     min-height: 100vh;
     color: #1a1a1a;
     line-height: 1.4;
@@ -16,15 +16,19 @@ body {
 .container {
     max-width: 900px;
     margin: 0 auto;
-    background: #fff;
-    box-shadow: 0 0 20px rgba(0,0,0,0.15);
+    background: #f5f3eb;
 }
 
 /* ========================================
-   RED MASTHEAD
+   MASTHEAD - BLUE AND RED DESIGN
    ======================================== */
 
 .masthead {
+    background: #fff;
+}
+
+.header-stripe-red {
+    height: 6px;
     background: #c41e3a;
 }
 
@@ -32,16 +36,17 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 15px 20px;
+    padding: 12px 20px;
     min-height: 70px;
+    background: #002d72;
 }
 
 .masthead-left {
-    flex: 0 0 60px;
+    flex: 0 0 55px;
 }
 
 .mlb-logo {
-    width: 50px;
+    width: 45px;
     height: auto;
 }
 
@@ -51,34 +56,40 @@ body {
 }
 
 .masthead-center h1 {
-    font-family: 'Pinyon Script', cursive;
-    font-size: 3.5rem;
-    font-weight: normal;
+    font-family: 'Lucida Blackletter', 'Old English Text MT', 'BlackChancery', serif;
+    font-size: 3rem;
+    font-weight: bold;
     color: #fff;
     line-height: 1;
     margin-bottom: 2px;
 }
 
 .masthead-date {
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
     color: #fff;
     font-size: 0.85rem;
 }
 
 .masthead-right {
-    flex: 0 0 100px;
+    flex: 0 0 90px;
     text-align: right;
     color: #fff;
-    font-size: 0.8rem;
     line-height: 1.4;
 }
 
 .masthead-right .edition-label {
     display: block;
+    font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
+    font-size: 0.8rem;
 }
 
 .masthead-right .edition-time {
     display: block;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: normal;
+    font-size: 0.8rem;
 }
 
 /* ========================================
@@ -89,8 +100,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 15px;
-    background: #fff;
+    padding: 10px 15px;
+    background: #f5f3eb;
     border-bottom: 1px solid #ccc;
     font-size: 0.75rem;
 }
@@ -100,31 +111,41 @@ body {
 }
 
 .source-note {
-    color: #666;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    color: #1a1a1a;
     font-size: 0.7rem;
 }
 
 .controls-center {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 4px 15px;
-    border: 1px solid #ccc;
-    background: #f5f5f5;
 }
 
-.controls-center label {
+.date-picker-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 15px;
+    border: 1px solid #999;
+    border-radius: 15px;
+    background: #fff;
+}
+
+.date-picker-box label {
+    font-family: Arial, Helvetica, sans-serif;
     font-weight: normal;
     color: #333;
+    font-size: 0.8rem;
 }
 
 #date-picker {
-    padding: 2px 6px;
-    font-family: Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 0.8rem;
-    border: 1px solid #999;
-    background: #fff;
+    border: none;
+    background: transparent;
     cursor: pointer;
+    outline: none;
 }
 
 .controls-right {
@@ -133,6 +154,7 @@ body {
 }
 
 #refresh-btn {
+    font-family: Arial, Helvetica, sans-serif;
     color: #0066cc;
     text-decoration: underline;
     font-size: 0.75rem;
@@ -153,12 +175,14 @@ body {
     text-align: center;
     padding: 40px 20px;
     color: #666;
+    font-family: 'Times New Roman', Times, serif;
 }
 
 .no-games {
     text-align: center;
     padding: 40px 20px;
     color: #666;
+    font-family: 'Times New Roman', Times, serif;
 }
 
 /* ========================================
@@ -167,7 +191,7 @@ body {
 
 .games-container {
     padding: 15px;
-    background: #fff;
+    background: #f5f3eb;
 }
 
 /* ========================================
@@ -175,6 +199,7 @@ body {
    ======================================== */
 
 .league-header {
+    font-family: 'Times New Roman', Times, serif;
     font-size: 1.1rem;
     font-weight: bold;
     text-transform: uppercase;
@@ -190,7 +215,7 @@ body {
 
 .game-card {
     margin-bottom: 25px;
-    background: #fff;
+    background: #f5f3eb;
 }
 
 .game-card:last-child {
@@ -208,6 +233,7 @@ body {
 }
 
 .game-title {
+    font-family: 'Times New Roman', Times, serif;
     font-weight: bold;
     font-size: 1rem;
     text-transform: uppercase;
@@ -215,6 +241,7 @@ body {
 }
 
 .game-title-bar .status {
+    font-family: 'Times New Roman', Times, serif;
     font-size: 0.85rem;
     font-style: italic;
     color: #666;
@@ -226,20 +253,17 @@ body {
     font-weight: bold;
 }
 
-.game-title-bar .status.live::before {
-    content: "";
-}
-
 /* ========================================
    NEWSPAPER BOXSCORE LAYOUT
    ======================================== */
 
 .newspaper-boxscore {
-    background: #fff;
+    background: #f5f3eb;
     color: #1a1a1a;
+    font-family: 'Times New Roman', Times, serif;
 }
 
-/* Linescore Section - Now at top */
+/* Linescore Section */
 .linescore-section {
     margin-bottom: 12px;
 }
@@ -247,6 +271,7 @@ body {
 .linescore-table {
     width: 100%;
     border-collapse: collapse;
+    font-family: 'Times New Roman', Times, serif;
     font-size: 0.85rem;
     color: #1a1a1a;
 }
@@ -264,7 +289,7 @@ body {
 
 .linescore-table .ls-innings {
     text-align: right;
-    font-family: Arial, sans-serif;
+    font-family: 'Times New Roman', Times, serif;
     letter-spacing: 2px;
 }
 
@@ -294,6 +319,7 @@ body {
 .batting-table {
     width: 100%;
     border-collapse: collapse;
+    font-family: 'Times New Roman', Times, serif;
     font-size: 0.8rem;
 }
 
@@ -342,6 +368,7 @@ body {
 .pitching-table {
     width: 100%;
     border-collapse: collapse;
+    font-family: 'Times New Roman', Times, serif;
     font-size: 0.8rem;
     margin-bottom: 10px;
 }
@@ -386,12 +413,14 @@ body {
 }
 
 .game-header .matchup {
+    font-family: 'Times New Roman', Times, serif;
     font-weight: bold;
     font-size: 1rem;
     text-transform: uppercase;
 }
 
 .game-header .status {
+    font-family: 'Times New Roman', Times, serif;
     font-size: 0.85rem;
     font-style: italic;
     color: #666;
@@ -400,6 +429,7 @@ body {
 .scheduled-game {
     padding: 15px 0;
     text-align: center;
+    font-family: 'Times New Roman', Times, serif;
 }
 
 .scheduled-game .teams-preview {
@@ -468,7 +498,7 @@ body {
 
 @media (max-width: 600px) {
     .masthead-center h1 {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
     }
 
     .masthead-banner {
@@ -498,10 +528,6 @@ body {
 
     .masthead-date {
         font-size: 0.7rem;
-    }
-
-    .container {
-        border: none;
     }
 
     .games-container {
