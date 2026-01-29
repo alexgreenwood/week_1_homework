@@ -28,6 +28,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
+    padding-top: 12px;
 }
 
 .header-stripe-red {
@@ -37,7 +38,6 @@ body {
 
 .header-stripe-red.top {
     height: 12px;
-    margin-top: 12px;
     margin-bottom: 4px;
 }
 
