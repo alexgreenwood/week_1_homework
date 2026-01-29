@@ -25,6 +25,9 @@ body {
 
 .masthead {
     background: #f5f3eb;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .header-stripe-red {
