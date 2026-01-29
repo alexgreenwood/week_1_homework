@@ -378,14 +378,14 @@ function createPlayerStatsHTML(boxscore, awayName, homeName, awayInningScores, h
                             <th>AB</th>
                             <th>R</th>
                             <th>H</th>
-                            <th>BI</th>
+                            <th>RBI</th>
                             <th>Avg.</th>
                             <th class="spacer"></th>
                             <th class="name-col">${homeAbbrev}</th>
                             <th>AB</th>
                             <th>R</th>
                             <th>H</th>
-                            <th>BI</th>
+                            <th>RBI</th>
                             <th>Avg.</th>
                         </tr>
                     </thead>
