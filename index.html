@@ -11,36 +11,38 @@
 </head>
 <body>
     <div class="container">
-        <header class="masthead">
-            <div class="header-stripe-red top"></div>
-            <div class="masthead-banner">
-                <div class="masthead-left">
-                    <img src="https://www.mlbstatic.com/team-logos/league-on-dark/1.svg" alt="MLB" class="mlb-logo">
+        <div class="sticky-header">
+            <header class="masthead">
+                <div class="header-stripe-red top"></div>
+                <div class="masthead-banner">
+                    <div class="masthead-left">
+                        <img src="https://www.mlbstatic.com/team-logos/league-on-dark/1.svg" alt="MLB" class="mlb-logo">
+                    </div>
+                    <div class="masthead-center">
+                        <h1>Box Scores</h1>
+                        <div class="masthead-date" id="current-date"></div>
+                    </div>
+                    <div class="masthead-right">
+                        <span class="edition-label">Live Edition</span>
+                        <span class="edition-time" id="edition-time"></span>
+                    </div>
                 </div>
-                <div class="masthead-center">
-                    <h1>Box Scores</h1>
-                    <div class="masthead-date" id="current-date"></div>
-                </div>
-                <div class="masthead-right">
-                    <span class="edition-label">Live Edition</span>
-                    <span class="edition-time" id="edition-time"></span>
-                </div>
-            </div>
-            <div class="header-stripe-red bottom"></div>
-        </header>
+                <div class="header-stripe-red bottom"></div>
+            </header>
 
-        <div class="controls">
-            <div class="controls-left">
-                <span class="source-note">Scores provided by Major League Baseball. All times local.</span>
-            </div>
-            <div class="controls-center">
-                <div class="date-picker-box">
-                    <label for="date-picker">Game Day:</label>
-                    <input type="date" id="date-picker" />
+            <div class="controls">
+                <div class="controls-left">
+                    <span class="source-note">Scores provided by Major League Baseball. All times local.</span>
                 </div>
-            </div>
-            <div class="controls-right">
-                <a href="#" id="refresh-btn" class="refresh-btn-box">Refresh Scores</a>
+                <div class="controls-center">
+                    <div class="date-picker-box">
+                        <label for="date-picker">Game Day:</label>
+                        <input type="date" id="date-picker" />
+                    </div>
+                </div>
+                <div class="controls-right">
+                    <a href="#" id="refresh-btn" class="refresh-btn-box">Refresh Scores</a>
+                </div>
             </div>
         </div>
 
