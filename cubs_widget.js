@@ -12,7 +12,7 @@ async function fetchGame() {
     `https://statsapi.mlb.com/api/v1/schedule` +
     `?sportId=1&teamId=${CUBS_TEAM_ID}&date=${today}&hydrate=linescore`;
   const data = await new Request(url).loadJSON();
-  if (!data.dates?.length || !data.dates[0].games?.length) return null;
+  if (!data.dates || !data.dates.length || !data.dates[0].games || !data.dates[0].games.length) return null;
   return data.dates[0].games[0];
 }
 
@@ -48,7 +48,7 @@ function addTeamRow(parent, name, score, isCubs) {
 
   row.addSpacer();
 
-  const scoreText = row.addText(score !== undefined && score !== null ? String(score) : "-");
+  const scoreText = row.addText(score != null ? String(score) : "-");
   scoreText.font = Font.boldSystemFont(15);
   scoreText.textColor = Color.white();
 }
