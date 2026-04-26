@@ -4,18 +4,13 @@ const TEXT_DIM = new Color("#999999");
 
 async function fetchGame() {
   try {
-    const d = new Date();
-    const mm = String(d.getMonth() + 1).padStart(2, "0");
-    const dd = String(d.getDate()).padStart(2, "0");
-    const yyyy = String(d.getFullYear());
-    const today = yyyy + "-" + mm + "-" + dd;
-    const url = "https://statsapi.mlb.com/api/v1/schedule?sportId=1&teamId=112&date=" + today;
+    const url = "https://raw.githubusercontent.com/alexgreenwood/week_1_homework/main/cubs-game.json";
     const req = new Request(url);
     const text = await req.loadString();
     const data = JSON.parse(text);
-    if (!data || !data.dates || data.dates.length === 0) return { debug: "No dates. Date queried: " + today };
+    if (!data || !data.dates || data.dates.length === 0) return { debug: "No game today" };
     const games = data.dates[0].games;
-    if (!games || games.length === 0) return { debug: "No games. Date queried: " + today };
+    if (!games || games.length === 0) return { debug: "No game today" };
     return games[0];
   } catch (e) {
     return { debug: "Error: " + String(e) };
