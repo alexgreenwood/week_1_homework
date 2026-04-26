@@ -9,12 +9,12 @@ async function fetchGame() {
       + String(CUBS_ID) + "&date=" + today + "&hydrate=linescore";
     const req = new Request(url);
     const data = await req.loadJSON();
-    if (!data || !data.dates || data.dates.length === 0) return null;
+    if (!data || !data.dates || data.dates.length === 0) return { debug: "No dates. Date queried: " + today };
     const games = data.dates[0].games;
-    if (!games || games.length === 0) return null;
+    if (!games || games.length === 0) return { debug: "No games. Date queried: " + today };
     return games[0];
   } catch (e) {
-    return null;
+    return { debug: "Error: " + String(e) };
   }
 }
 
@@ -63,9 +63,9 @@ async function buildWidget() {
   w.addSpacer(8);
 
   const game = await fetchGame();
-  if (!game) {
-    const msg = w.addText("No game today");
-    msg.font = Font.systemFont(14);
+  if (!game || game.debug) {
+    const msg = w.addText(game && game.debug ? game.debug : "No game today");
+    msg.font = Font.systemFont(11);
     msg.textColor = Color.white();
     return w;
   }
