@@ -1,6 +1,6 @@
 const CUBS_ID = 112;
-const CUBS_BLUE = new Color("#0E3386");
-const TEXT_DIM = new Color("#AACCFF");
+const BG_COLOR = new Color("#1a1a1a");
+const TEXT_DIM = new Color("#999999");
 
 async function fetchGame() {
   try {
@@ -55,7 +55,7 @@ function addTeamRow(parent, name, score, isBold) {
 
 async function buildWidget() {
   const w = new ListWidget();
-  w.backgroundColor = CUBS_BLUE;
+  w.backgroundColor = BG_COLOR;
   w.setPadding(14, 16, 14, 16);
   const header = w.addText("CUBS");
   header.font = Font.boldSystemFont(11);
