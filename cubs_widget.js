@@ -4,9 +4,12 @@ const TEXT_DIM = new Color("#999999");
 
 async function fetchGame() {
   try {
-    const today = new Date().toISOString().split("T")[0];
-    const url = "https://statsapi.mlb.com/api/v1/schedule?sportId=1&teamId="
-      + String(CUBS_ID) + "&date=" + today + "&hydrate=linescore";
+    const d = new Date();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    const yyyy = String(d.getFullYear());
+    const today = yyyy + "-" + mm + "-" + dd;
+    const url = "https://statsapi.mlb.com/api/v1/schedule?sportId=1&teamId=112&date=" + today;
     const req = new Request(url);
     const data = await req.loadJSON();
     if (!data || !data.dates || data.dates.length === 0) return { debug: "No dates. Date queried: " + today };
