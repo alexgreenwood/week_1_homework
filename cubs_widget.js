@@ -10,8 +10,8 @@ async function fetchGame() {
     const yyyy = String(d.getFullYear());
     const today = yyyy + "-" + mm + "-" + dd;
     const url = "https://statsapi.mlb.com/api/v1/schedule?sportId=1&teamId=112&date=" + today;
-    const req = new Request(url);
-    const data = await req.loadJSON();
+    const response = await fetch(url);
+    const data = await response.json();
     if (!data || !data.dates || data.dates.length === 0) return { debug: "No dates. Date queried: " + today };
     const games = data.dates[0].games;
     if (!games || games.length === 0) return { debug: "No games. Date queried: " + today };
