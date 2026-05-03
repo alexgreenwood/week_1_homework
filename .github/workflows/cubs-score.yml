@@ -1,0 +1,28 @@
+name: Update Cubs Score
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-score:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch Cubs game data
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          curl -s "https://statsapi.mlb.com/api/v1/schedule?sportId=1&teamId=112&date=$DATE" > cubs-game.json
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add cubs-game.json
+          git diff --staged --quiet || git commit -m "Update Cubs score"
+          git push
