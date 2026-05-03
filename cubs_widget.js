@@ -4,7 +4,7 @@ const TEXT_DIM = new Color("#999999");
 
 async function fetchGame() {
   try {
-    const url = "https://raw.githubusercontent.com/alexgreenwood/week_1_homework/main/cubs-game.json";
+    const url = "https://raw.githubusercontent.com/alexgreenwood/week_1_homework/master/cubs-game.json";
     const req = new Request(url);
     const text = await req.loadString();
     const data = JSON.parse(text);
