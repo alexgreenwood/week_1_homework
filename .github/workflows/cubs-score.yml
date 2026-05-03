@@ -14,15 +14,54 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Fetch Cubs game data
+      - name: Fetch and format Cubs score
         run: |
-          DATE=$(date -u +%Y-%m-%d)
-          curl -s "https://statsapi.mlb.com/api/v1/schedule?sportId=1&teamId=112&date=$DATE" > cubs-game.json
+          python3 << 'EOF'
+          import json, urllib.request
+          from datetime import datetime, timezone
+
+          date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+          url = "https://statsapi.mlb.com/api/v1/schedule?sportId=1&teamId=112&date=" + date
+          with urllib.request.urlopen(url) as r:
+              data = json.loads(r.read())
+
+          if not data.get("dates") or not data["dates"][0].get("games"):
+              result = {"line1": "No game today", "line2": "", "line3": ""}
+          else:
+              game = data["dates"][0]["games"][0]
+              away_name = game["teams"]["away"]["team"]["name"].split()[-1]
+              home_name = game["teams"]["home"]["team"]["name"].split()[-1]
+              away_score = game["teams"]["away"].get("score")
+              home_score = game["teams"]["home"].get("score")
+              away_str = str(away_score) if away_score is not None else "-"
+              home_str = str(home_score) if home_score is not None else "-"
+              state = game["status"]["detailedState"]
+
+              if state in ("Scheduled", "Pre-Game", "Warmup"):
+                  dt = datetime.fromisoformat(game["gameDate"].replace("Z", "+00:00"))
+                  status = dt.strftime("%-I:%M %p UTC")
+              elif state == "In Progress":
+                  ls = game.get("linescore", {})
+                  status = ls.get("inningHalf", "") + " " + ls.get("currentInningOrdinal", "")
+              elif state in ("Final", "Game Over"):
+                  status = "Final"
+              else:
+                  status = state
+
+              result = {
+                  "line1": away_name + "   " + away_str,
+                  "line2": home_name + "   " + home_str,
+                  "line3": status
+              }
+
+          with open("cubs-score.json", "w") as f:
+              json.dump(result, f)
+          EOF
 
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add cubs-game.json
+          git add cubs-score.json
           git diff --staged --quiet || git commit -m "Update Cubs score"
           git push
